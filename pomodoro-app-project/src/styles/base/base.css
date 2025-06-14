@@ -1,0 +1,6 @@
+body {
+  font-family: var(--ff-space);
+  background-color: var(--clr-blue-850);
+  color: var(--clr-white);
+  font-size: var(--fs-24);
+}

@@ -1,0 +1,11 @@
+.white {
+  color: var(--clr-white);
+}
+
+.bold {
+  font-weight: var(--fw-bold);
+}
+
+.normal {
+  font-weight: var(--fw-normal);
+}

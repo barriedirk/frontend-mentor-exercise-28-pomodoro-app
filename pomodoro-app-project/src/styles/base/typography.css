@@ -1,0 +1,221 @@
+/* === Desktop Text Presets === */
+
+/* Text Preset 1 (Font 1) */
+.text-preset-1--desktop--font-1 {
+  font-family: var(--ff-kumbh);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-100);
+  line-height: var(--lh-125);
+  letter-spacing: var(--ls--5);
+}
+
+/* Text Preset 2 (Font 1) */
+.text-preset-2--desktop--font-1 {
+  font-family: var(--ff-kumbh);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-16);
+  line-height: var(--lh-125);
+  letter-spacing: var(--ls-15);
+}
+
+/* Text Preset 3 (Font 1) */
+.text-preset-3--desktop--font-1 {
+  font-family: var(--ff-kumbh);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-14);
+  line-height: var(--lh-120);
+  letter-spacing: var(--ls-0);
+}
+
+/* Text Preset 1 (Font 2) */
+.text-preset-1--desktop--font-2 {
+  font-family: var(--ff-roboto);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-100);
+  line-height: var(--lh-130);
+  letter-spacing: var(--ls-0);
+}
+
+/* Text Preset 2 (Font 2) */
+.text-preset-2--desktop--font-2 {
+  font-family: var(--ff-roboto);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-16);
+  line-height: var(--lh-125);
+  letter-spacing: var(--ls-15);
+}
+
+/* Text Preset 3 (Font 2) */
+.text-preset-3--desktop--font-2 {
+  font-family: var(--ff-roboto);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-14);
+  line-height: var(--lh-130);
+  letter-spacing: var(--ls-0);
+}
+
+/* Text Preset 1 (Font 3) */
+.text-preset-1--desktop--font-3 {
+  font-family: var(--ff-space);
+  font-weight: var(--fw-normal);
+  font-size: var(--fs-100);
+  line-height: var(--lh-150);
+  letter-spacing: var(--ls--10);
+}
+
+/* Text Preset 2 (Font 3) */
+.text-preset-2--desktop--font-3 {
+  font-family: var(--ff-space);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-16);
+  line-height: var(--lh-150);
+  letter-spacing: var(--ls-15);
+}
+
+/* Text Preset 3 (Font 3) */
+.text-preset-3--desktop--font-3 {
+  font-family: var(--ff-space);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-13);
+  line-height: var(--lh-145);
+  letter-spacing: var(--ls-0);
+}
+
+/* === Settings Presets === */
+
+/* Text Preset 1 (Settings) */
+.text-preset-1--settings {
+  font-family: var(--ff-kumbh);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-28);
+  line-height: var(--lh-125);
+  letter-spacing: var(--ls-0);
+}
+
+/* Text Preset 2 (Settings, Font 1) */
+.text-preset-2--settings--font-1 {
+  font-family: var(--ff-kumbh);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-13);
+  line-height: var(--lh-145);
+  letter-spacing: var(--ls-0);
+}
+
+/* Text Preset 2 (Settings, Font 2) */
+.text-preset-2--settings--font-2 {
+  font-family: var(--ff-roboto);
+  font-weight: var(--fw-normal);
+  font-size: var(--fs-16);
+  line-height: var(--lh-125);
+  letter-spacing: var(--ls-0);
+}
+
+/* Text Preset 2 (Settings, Font 3) */
+.text-preset-2--settings--font-3 {
+  font-family: var(--ff-space);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-16);
+  line-height: var(--lh-125);
+  letter-spacing: var(--ls-0);
+}
+
+/* Text Preset 3 (Settings) */
+.text-preset-3--settings {
+  font-family: var(--ff-kumbh);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-13);
+  line-height: var(--lh-125);
+  letter-spacing: var(--ls-5);
+}
+
+/* Text Preset 4 (Settings) */
+.text-preset-4--settings {
+  font-family: var(--ff-kumbh);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-12);
+  line-height: var(--lh-125);
+  letter-spacing: var(--ls-0);
+}
+
+/* === Mobile Text Presets === */
+
+/* Text Preset 1 (Mobile, Font 1) */
+.text-preset-1--mobile--font-1 {
+  font-family: var(--ff-kumbh);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-80);
+  line-height: var(--lh-125);
+  letter-spacing: var(--ls--5);
+}
+
+/* Text Preset 2 (Mobile, Font 1) */
+.text-preset-2--mobile--font-1 {
+  font-family: var(--ff-kumbh);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-14);
+  line-height: var(--lh-120);
+  letter-spacing: var(--ls-13);
+}
+
+/* Text Preset 3 (Mobile, Font 1) */
+.text-preset-3--mobile--font-1 {
+  font-family: var(--ff-kumbh);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-12);
+  line-height: var(--lh-125);
+  letter-spacing: var(--ls-0);
+}
+
+/* Text Preset 1 (Mobile, Font 2) */
+.text-preset-1--mobile--font-2 {
+  font-family: var(--ff-roboto);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-80);
+  line-height: var(--lh-133);
+  letter-spacing: var(--ls-0);
+}
+
+/* Text Preset 2 (Mobile, Font 2) */
+.text-preset-2--mobile--font-2 {
+  font-family: var(--ff-roboto);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-14);
+  line-height: var(--lh-130);
+  letter-spacing: var(--ls-13);
+}
+
+/* Text Preset 3 (Mobile, Font 2) */
+.text-preset-3--mobile--font-2 {
+  font-family: var(--ff-roboto);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-12);
+  line-height: var(--lh-133);
+  letter-spacing: var(--ls-0);
+}
+
+/* Text Preset 1 (Mobile, Font 3) */
+.text-preset-1--mobile--font-3 {
+  font-family: var(--ff-space);
+  font-weight: var(--fw-normal);
+  font-size: var(--fs-80);
+  line-height: var(--lh-120);
+  letter-spacing: var(--ls--10);
+}
+
+/* Text Preset 2 (Mobile, Font 3) */
+.text-preset-2--mobile--font-3 {
+  font-family: var(--ff-space);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-14);
+  line-height: var(--lh-150);
+  letter-spacing: var(--ls-13);
+}
+
+/* Text Preset 3 (Mobile, Font 3) */
+.text-preset-3--mobile--font-3 {
+  font-family: var(--ff-space);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-12);
+  line-height: var(--lh-150);
+  letter-spacing: var(--ls-0);
+}
