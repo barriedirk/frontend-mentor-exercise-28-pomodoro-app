@@ -1,0 +1,147 @@
+---
+
+---
+
+<section
+  class="pomodoro__header w-full flex flex-col items-center gap-10 md:gap-22"
+>
+  <h1 class="pomodoro__header-title white">pomodoro</h1>
+
+  <form
+    id="f-options"
+    class="pomodoro__options w-full flex flex-row justify-center items-center p-2 text-preset-3--mobile--font-3 gap-3"
+  >
+    <fieldset class="flex gap-3" aria-labelledby="pomodoro-label">
+      <legend id="pomodoro-label" class="sr-only">Select Pomodoro Mode</legend>
+
+      <div class="pomodoro__option flex justify-center items-center">
+        <input
+          id="f-option-pomodoro"
+          type="radio"
+          name="f-option"
+          value="pomodoro"
+          aria-labelledby="label-pomodoro"
+        />
+        <label
+          id="label-pomodoro"
+          for="f-option-pomodoro"
+          class="flex justify-center items-center"
+          tabindex="0">pomodoro</label
+        >
+      </div>
+
+      <div class="pomodoro__option flex justify-center items-center">
+        <input
+          id="f-option-short-break"
+          type="radio"
+          name="f-option"
+          value="short-break"
+          aria-labelledby="label-short-break"
+        />
+        <label
+          id="label-short-break"
+          for="f-option-short-break"
+          class="flex justify-center items-center"
+          tabindex="0">short break</label
+        >
+      </div>
+
+      <div class="pomodoro__option flex justify-center items-center">
+        <input
+          id="f-option-long-break"
+          type="radio"
+          name="f-option"
+          value="long-break"
+          aria-labelledby="label-long-break"
+        />
+        <label
+          id="label-long-break"
+          for="f-option-long-break"
+          class="flex justify-center items-center"
+          tabindex="0">long break</label
+        >
+      </div>
+    </fieldset>
+  </form>
+</section>
+
+<script type="module" is:inline>
+  document.querySelectorAll('input[name="f-option"]').forEach((input) => {
+    input.addEventListener("keydown", (keyboardEvent) => {
+      if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
+        event.preventDefault();
+        input.checked = true;
+      }
+    });
+  });
+
+  document.querySelectorAll(".pomodoro__option label").forEach((label) => {
+    label.addEventListener("keydown", (keyboardEvent) => {
+      if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
+        event.preventDefault();
+        const inputId = label.getAttribute("for");
+        if (!inputId) return;
+
+        const input = document.getElementById(inputId);
+        if (input) {
+          input.checked = true;
+          input.focus();
+          console.log(`Selected via label: ${input.value}`);
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  .pomodoro__header-title {
+    font-family: var(--ff-kumbh);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-24);
+    line-height: normal;
+  }
+
+  .pomodoro__options {
+    background-color: var(--clr-blue-900);
+    border-radius: 31.5px;
+    width: fit-content;
+  }
+
+  .pomodoro__option {
+    position: relative;
+    flex: 0 0 105px;
+    color: var(--clr-blue-100);
+    height: 48px;
+    width: 105px;
+  }
+
+  .pomodoro__option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .pomodoro__option label {
+    border-radius: 26.5px;
+    width: 100%;
+    height: 100%;
+    background-color: var(--clr-blue-900);
+    color: var(--clr-blue-100);
+  }
+
+  .pomodoro__options input[type="radio"]:checked + label {
+    background-color: var(--clr-purple-400);
+    color: var(--clr-blue-850);
+  }
+
+  .pomodoro__option label:focus {
+    outline: 2px solid var(--clr-cyan-300);
+    outline-offset: 2px;
+  }
+
+  @media screen and (min-width: 48em) {
+    .pomodoro__header-title {
+      font-size: var(--fs-32);
+    }
+  }
+</style>

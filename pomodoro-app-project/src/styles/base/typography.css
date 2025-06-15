@@ -219,3 +219,11 @@
   line-height: var(--lh-150);
   letter-spacing: var(--ls-0);
 }
+
+@media screen and (min-width: 48em) {
+  /* Text Preset 3 (Mobile, Font 3) */
+  .text-preset-3--mobile--font-3 {
+    font-size: var(--fs-13);
+    line-height: var(--lh-145);
+  }
+}

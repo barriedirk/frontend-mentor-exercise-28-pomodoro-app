@@ -1,0 +1,13 @@
+---
+import { base } from "../utils/base.js";
+
+console.log(base);
+---
+
+<div class="pomodoro-settings">
+  <button id="btnPomodoroSettings" type="button" aria-label="Settings">
+    <svg class="settings w-[28px] h-[28px] basis-[28px]" aria-hidden="true">
+      <use href={`${base}assets/icon-settings.svg#settings`}></use>
+    </svg>
+  </button>
+</div>

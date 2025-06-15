@@ -1,0 +1,18 @@
+---
+import TimerIsland from "./TimerIsland.js";
+---
+
+<div data-island="timer">
+  <div class="countdown">25:00</div>
+  <div class="controls">
+    <button class="start-stop">Start</button>
+    <button class="reset">Reset</button>
+  </div>
+  <div class="session-time">25:00</div>
+  <div class="break-time">05:00</div>
+</div>
+
+<script type="module" is:inline>
+  import TimerIsland from "./TimerIsland.js";
+  TimerIsland();
+</script>

@@ -1,13 +1,14 @@
 ---
 interface Props {
   className?: string;
+  id?: string;
 }
 
-let { className = "" } = Astro.props;
+let { className = "", id = "" } = Astro.props;
 
 className = `${className} w-full mx-auto px-[25px]`;
 ---
 
-<div class={className}>
+<div class={className} {...id ? { id } : {}}>
   <slot />
 </div>

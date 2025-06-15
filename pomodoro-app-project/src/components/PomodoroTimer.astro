@@ -1,0 +1,134 @@
+---
+
+---
+
+<div class="pomodoro-timer w-full">
+  <div class="pomodoro-progress-outer">
+    <div class="pomodoro-progress" style="--progress: 20;">
+      <!-- <div class="progress-dot"></div> -->
+      <div
+        class="pomodoro-display--container flex flex-col justify-center items-center gap-4"
+      >
+        <span class="pomodoro-display text-preset-1--mobile--font-3">25:00</span
+        >
+        <button
+          type="button"
+          id="btn-timer"
+          class="text-preset-2--mobile--font-3 uppercase">Start</button
+        >
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  const progressDot = document.querySelector(".progress-dot");
+
+  function updateProgress(percent, remainingSeconds) {
+    progressEl.style.setProperty("--progress", percent.toFixed(2));
+
+    const angle = (percent / 100) * 360;
+    progressDot.style.transform = `translate(-50%, -100%) rotate(${angle}deg) translateY(calc(var(--size) / 2 - var(--thickness) / 2))`;
+
+    const minutes = Math.floor(remainingSeconds / 60);
+    const seconds = remainingSeconds % 60;
+    timeDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  }
+
+  // document.addEventListener("DOMContentLoaded", () => {
+  //   const timerEl = document.querySelector(".pomodoro-timer");
+  //   const progressEl = timerEl.querySelector(".circle-progress");
+  //   const timeDisplay = timerEl.querySelector(".time-display");
+
+  //   const totalDuration = parseInt(timerEl.dataset.duration, 10); // in seconds
+  //   let timeRemaining = totalDuration;
+
+  //   const interval = setInterval(() => {
+  //     timeRemaining--;
+
+  //     // Calculate percent complete
+  //     const percent = ((totalDuration - timeRemaining) / totalDuration) * 100;
+  //     progressEl.style.setProperty("--progress", percent.toFixed(2));
+
+  //     // Update time display
+  //     const minutes = Math.floor(timeRemaining / 60);
+  //     const seconds = timeRemaining % 60;
+  //     timeDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+
+  //     if (timeRemaining <= 0) {
+  //       clearInterval(interval);
+  //       timeDisplay.textContent = "00:00";
+  //     }
+  //   }, 1000);
+  // });
+</script>
+
+<style>
+  .pomodoro-timer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+  }
+
+  .progress-dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #f87070;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -100%) rotate(0deg)
+      translateY(calc(var(--size) / 2 - var(--thickness) / 2));
+    transform-origin: center;
+    z-index: 2;
+  }
+
+  .pomodoro-progress-outer {
+    background: var(--gradient1);
+    border-radius: 50%;
+    padding: 10px; /* Thickness of the gradient ring */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pomodoro-progress {
+    --size: 300px;
+    --thickness: 12px;
+    --progress: 0;
+
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background: conic-gradient(#f87070 calc(var(--progress) * 1%), #2e325a 0%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: background 0.3s ease-out;
+  }
+
+  .pomodoro-progress::before {
+    content: "";
+    position: absolute;
+    width: calc(var(--size) - var(--thickness) * 2);
+    height: calc(var(--size) - var(--thickness) * 2);
+    background: var(--clr-blue-900);
+    border-radius: 50%;
+    z-index: 1;
+  }
+
+  .pomodoro-display--container {
+    position: relative;
+    z-index: 2;
+    color: white;
+  }
+
+  @media screen and (min-width: 48em) {
+    .pomodoro-progress {
+      --size: 410px;
+    }
+  }
+</style>
