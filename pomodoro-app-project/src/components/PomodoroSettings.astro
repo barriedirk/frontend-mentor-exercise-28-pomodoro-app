@@ -4,10 +4,99 @@ import { base } from "../utils/base.js";
 console.log(base);
 ---
 
-<div class="pomodoro-settings">
-  <button id="btnPomodoroSettings" type="button" aria-label="Settings">
-    <svg class="settings w-[28px] h-[28px] basis-[28px]" aria-hidden="true">
+<section class="pomodoro-settings glass">
+  <button
+    id="btnPomodoroSettings"
+    class="pomodoro-settings__button"
+    type="button"
+    aria-label="Settings"
+  >
+    <svg class="settings w-[28px] h-[28px]" aria-hidden="true">
       <use href={`${base}assets/icon-settings.svg#settings`}></use>
     </svg>
   </button>
-</div>
+</section>
+
+<style>
+  /* .pomodoro-settings__button {
+    width: fit-content;
+    height: fit-content;
+  } */
+
+  .settings {
+    transition: transform 0.5s ease;
+  }
+
+  .settings.rotating {
+    transform: rotate(90deg);
+    transition: transform 0.4s ease;
+  }
+
+  .pomodoro-settings__button:hover .settings {
+    transform: rotate(90deg);
+  }
+
+  @keyframes jelly {
+    0% {
+      transform: scale(1);
+    }
+    30% {
+      transform: scale(1.2, 0.8);
+    }
+    50% {
+      transform: scale(0.9, 1.1);
+    }
+    70% {
+      transform: scale(1.05, 0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .settings.jelly {
+    animation: jelly 0.5s ease-in-out;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 0.5rem;
+    line-height: 1;
+  }
+</style>
+
+<script type="module">
+  document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("btnPomodoroSettings");
+    const icon = btn.querySelector(".settings");
+
+    let touched = false;
+
+    // btn.addEventListener("touchstart", () => {
+    //   if (!touched) {
+    //     icon.classList.add("rotating");
+    //     setTimeout(() => icon.classList.remove("rotating"), 400);
+    //     touched = true;
+    //     setTimeout(() => (touched = false), 500); // prevent double tap
+    //   }
+    // });
+
+    btn.addEventListener("touchstart", () => {
+      if (!touched) {
+        icon.classList.add("rotating", "jelly");
+        setTimeout(() => {
+          icon.classList.remove("rotating", "jelly");
+        }, 500);
+        touched = true;
+        setTimeout(() => (touched = false), 600);
+      }
+    });
+
+    btn.addEventListener("mouseenter", () => {
+      icon.classList.add("jelly");
+      setTimeout(() => icon.classList.remove("jelly"), 500);
+    });
+  });
+</script>

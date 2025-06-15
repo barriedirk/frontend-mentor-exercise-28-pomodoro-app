@@ -2,6 +2,10 @@
   color: var(--clr-white);
 }
 
+.blue-100 {
+  color: var(--clr-blue-100);
+}
+
 .bold {
   font-weight: var(--fw-bold);
 }

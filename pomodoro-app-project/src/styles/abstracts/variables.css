@@ -18,6 +18,8 @@
   --clr-black: rgb(0, 0, 0);
 
   --gradient1: linear-gradient(to bottom, rgb(46, 50, 90) 0%, rgb(14, 17, 42) 100%);
+  --gradient2: linear-gradient(-45deg, rgb(46, 50, 90), rgb(14, 17, 42));
+  --gradient3: linear-gradient(-45deg, rgb(42, 46, 81), rgb(23, 25, 48));
   
   --ff-kumbh: "Kumbh Sans", sans-serif;
   --ff-roboto: "Roboto Slab", serif;
