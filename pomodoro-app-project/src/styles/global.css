@@ -8,3 +8,50 @@
 /* @import "./base/debug.css"; */
 
 @import "./utils/helpers.css";
+
+
+body {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+body.fade-in {
+  opacity: 1;
+}
+
+dialog.modal-dialog::-webkit-scrollbar {
+  display: none;           
+}
+
+dialog.modal-dialog {
+  scrollbar-width: none;   
+  -ms-overflow-style: none; 
+  color: var(--clr-blue-950);
+  background-color: var(--clr-white);
+  border: none;
+  border-radius: 15px;
+
+  text-align: center;
+  position: fixed;
+  z-index: 9999;
+
+  width: fit-content;
+  max-width: 620px;
+  max-height: 750px;
+  margin: auto;
+
+  opacity: 0.1;
+  transform: translateY(-5rem);
+  animation: dialogFadeInUp 0.1s ease-out 0.2s forwards;
+}
+
+@keyframes dialogFadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.8);
+}

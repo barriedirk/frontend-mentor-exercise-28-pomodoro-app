@@ -1,11 +1,14 @@
 ---
-
+import { base } from "../utils/base.js";
 ---
 
 <section
   class="pomodoro__header w-full flex flex-col items-center gap-10 md:gap-22"
 >
-  <h1 class="pomodoro__header-title white">pomodoro</h1>
+  <h1 class="pomodoro__header-title white">
+    <span class="sr-only">Pomodoro</span>
+    <img src={`${base}assets/logo.svg`} alt="Pomodoro Logo" />
+  </h1>
 
   <form
     id="f-options"

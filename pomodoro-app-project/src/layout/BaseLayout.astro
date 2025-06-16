@@ -80,12 +80,11 @@ className += " flex flex-col";
     <main>
       <slot />
     </main>
-
-    <dialog id="modal-dialog" class="modal-dialog hide-scrollbar"></dialog>
   </body>
 </html>
 
 <script>
+  // @todo, missing fade-in css
   const initializePage = () => {
     window.addEventListener("load", () => {
       document.body.classList.add("fade-in");

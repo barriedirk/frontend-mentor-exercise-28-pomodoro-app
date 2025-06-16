@@ -7,24 +7,29 @@
     class="pomodoro-progress-outer flex flex-col justify-center items-center"
   >
     <div
-      class="pomodoro-progress-inner flex flex-col justify-center items-center"
+      class="pomodoro-progress-middle flex flex-col justify-center items-center"
     >
       <div
-        class="pomodoro-progress flex flex-col justify-center items-center"
-        style="--progress: 20;"
+        class="pomodoro-progress-inner flex flex-col justify-center items-center"
       >
-        <!-- <div class="progress-dot"></div> -->
         <div
-          class="pomodoro-display--container flex flex-col justify-center items-center gap-4"
+          class="pomodoro-progress flex flex-col justify-center items-center"
+          style="--progress: 20;"
         >
-          <span class="pomodoro-display text-preset-1--mobile--font-3 blue-100"
-            >25:00</span
+          <!-- <div class="progress-dot"></div> -->
+          <div
+            class="pomodoro-display--container flex flex-col justify-center items-center gap-4"
           >
-          <button
-            type="button"
-            id="btn-timer"
-            class="text-preset-2--mobile--font-3 uppercase">Start</button
-          >
+            <span
+              class="pomodoro-display text-preset-1--mobile--font-3 blue-100"
+              >25:00</span
+            >
+            <button
+              type="button"
+              id="btn-timer"
+              class="text-preset-2--mobile--font-3 uppercase">Start</button
+            >
+          </div>
         </div>
       </div>
     </div>
@@ -99,13 +104,26 @@
     z-index: 2;
   }
 
+  .pomodoro-progress-middle {
+    border-radius: 50%;
+    padding: 20px;
+    background: linear-gradient(-45deg, rgb(42, 46, 81), rgb(23, 25, 48));
+    filter: drop-shadow(3.125rem 3.125rem 6.25rem #151832);
+  }
+
+  .pomodoro-progress-outer::before {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(3.125rem 3.125rem 6.25rem #151832);
+  }
+
   .pomodoro-progress-outer {
+    position: relative;
     background: var(--gradient2);
     border-radius: 50%;
     padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     filter: drop-shadow(-3.125rem -3.125rem 6.25rem #272c5a);
   }
 
@@ -113,10 +131,6 @@
     background: var(--clr-blue-900);
     border-radius: 50%;
     padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    filter: drop-shadow(3.125rem 3.125rem 6.25rem #151832);
   }
 
   .pomodoro-progress {
@@ -137,7 +151,7 @@
         var(--clr-purple-400) calc(var(--progress) * 1%),
         transparent 0%
       ),
-      var(--gradient3);
+      var(--clr-blue-50-1);
     transition: background 0.3s ease-out;
   }
 

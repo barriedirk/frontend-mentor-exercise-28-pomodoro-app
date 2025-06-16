@@ -2,8 +2,32 @@
   color: var(--clr-white);
 }
 
+.blue-900 {
+  color: var(--clr-blue-900);
+}
+
 .blue-100 {
   color: var(--clr-blue-100);
+}
+
+.grey-400 {
+  color: var(--clr-grey-400);
+}
+
+.bg-blue-50 {
+  background-color: var(--clr-blue-50);
+}
+
+.bg-red-400 {
+  background-color: var(--clr-red-400);
+}
+
+.bg-cyan-300 {
+  background-color: var(--clr-cyan-300);
+}
+
+.bg-purple-400 {
+  background-color: var(--clr-purple-400);
 }
 
 .bold {
@@ -12,4 +36,11 @@
 
 .normal {
   font-weight: var(--fw-normal);
+}
+
+.absolute-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

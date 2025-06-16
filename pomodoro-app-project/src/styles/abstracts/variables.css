@@ -4,6 +4,7 @@
   --clr-blue-850: rgb(30, 33, 63);
   --clr-blue-100: rgb(215, 224, 255);
   --clr-blue-50: rgb(239, 241, 250);
+  --clr-blue-50-1: rgba(239, 241, 250, 0.01);
 
   --clr-grey-400: rgb(187, 189, 203);
   --clr-grey-200: rgb(228, 226, 226);
@@ -17,10 +18,14 @@
   --clr-white: rgb(255, 255, 255);
   --clr-black: rgb(0, 0, 0);
 
-  --gradient1: linear-gradient(to bottom, rgb(46, 50, 90) 0%, rgb(14, 17, 42) 100%);
+  --gradient1: linear-gradient(
+    to bottom,
+    rgb(46, 50, 90) 0%,
+    rgb(14, 17, 42) 100%
+  );
   --gradient2: linear-gradient(-45deg, rgb(46, 50, 90), rgb(14, 17, 42));
   --gradient3: linear-gradient(-45deg, rgb(42, 46, 81), rgb(23, 25, 48));
-  
+
   --ff-kumbh: "Kumbh Sans", sans-serif;
   --ff-roboto: "Roboto Slab", serif;
   --ff-space: "Space Mono", monospace;
@@ -36,15 +41,16 @@
   --fw-black: 900;
 
   /* === Font Sizes === */
-  --fs-100: 6.25rem;     /* 100px */
-  --fs-80: 5rem;         /* 80px */
-  --fs-32: 2rem;         /* 32px */
-  --fs-28: 1.75rem;      /* 28px */
-  --fs-24: 1.5rem;       /* 24px */
-  --fs-16: 1rem;         /* 16px */
-  --fs-14: 0.875rem;     /* 14px */
-  --fs-13: 0.8125rem;    /* 13px */
-  --fs-12: 0.75rem;      /* 12px */
+  --fs-100: 6.25rem;
+  --fs-80: 5rem;
+  --fs-32: 2rem;
+  --fs-28: 1.75rem;
+  --fs-24: 1.5rem;
+  --fs-16: 1rem;
+  --fs-14: 0.875rem;
+  --fs-13: 0.8125rem;
+  --fs-12: 0.75rem;
+  --fs-11: 0.6875rem;
 
   /* === Line Heights === */
   --lh-120: 1.2;

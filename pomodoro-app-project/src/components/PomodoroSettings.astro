@@ -1,7 +1,5 @@
 ---
 import { base } from "../utils/base.js";
-
-console.log(base);
 ---
 
 <section class="pomodoro-settings glass">
@@ -16,12 +14,213 @@ console.log(base);
     </svg>
   </button>
 </section>
+<dialog id="modal-dialog" class="modal-dialog settings-dialog" open>
+  <div
+    class="form-settings__header flex flex-row justify-between items-center p-5"
+  >
+    <h2 class="text-preset-1--settings blue-900">Settings</h2>
+    <button id="btnCloseDialog" class="form-settings__close">
+      <img src={`${base}assets/icon-close.svg`} />
+    </button>
+  </div>
+
+  <form id="form-settings" class="form-settings p-5">
+    <fieldset>
+      <legend class="form-settings__legend blue-900">TIME (MINUTES)</legend>
+      <div class="form-settings__timer">
+        <div class="fs__group">
+          <label
+            class="fs__label grey-400 text-preset-4--settings"
+            for="time_pomodoro">pomodoro</label
+          >
+          <div class="fs__input-wrapper bg-blue-50 p-4">
+            <input
+              id="time_pomodoro"
+              name="time_pomodoro"
+              class="fs__input text-preset-3--settings"
+              value="11"
+              type="number"
+            />
+          </div>
+        </div>
+        <div class="fs__group">
+          <label
+            class="fs__label grey-400 text-preset-4--settings"
+            for="time_short_break">short break</label
+          >
+          <div class="fs__input-wrapper bg-blue-50 p-4">
+            <input
+              id="time_short_break"
+              name="time_short_break"
+              class="fs__input text-preset-3--settings"
+              value="11"
+              type="number"
+            />
+          </div>
+        </div>
+        <div class="fs__group">
+          <label
+            class="fs__label grey-400 text-preset-4--settings"
+            for="time_long_break">long break</label
+          >
+          <div class="fs__input-wrapper bg-blue-50 p-4">
+            <input
+              id="time_long_break"
+              name="time_long_break"
+              class="fs__input text-preset-3--settings"
+              value="11"
+              type="number"
+            />
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <hr />
+    <fieldset>
+      <legend class="form-settings__legend blue-900">FONT</legend>
+      <div class="form-settings__font">
+        <div class="fs__group">
+          <input type="radio" name="fs__font" value="Kumbh Sans" />
+          <label
+            class="fs__label--font text-preset-2--settings--font-1 absolute-center"
+            >Aa</label
+          >
+        </div>
+        <div class="fs__group">
+          <input type="radio" name="fs__font" value="Roboto Slab" />
+          <label
+            class="fs__label--font text-preset-2--settings--font-2 absolute-center"
+            >Aa</label
+          >
+        </div>
+        <div class="fs__group">
+          <input type="radio" name="fs__font" value="Space Mono" />
+          <label
+            class="fs__label--font text-preset-2--settings--font-3 absolute-center"
+            >Aa</label
+          >
+        </div>
+      </div>
+    </fieldset>
+    <hr />
+    <fieldset>
+      <legend class="form-settings__legend blue-900">COLOR</legend>
+      <div class="form-settings__color">
+        <div class="fs__group">
+          <input type="radio" name="fs__font" value="red-400" />
+          <label class="fs__label--color bg-red-400 absolute-center">
+            <span class="sr-only">color red-400</span>
+            <img src={`${base}assets/icon-checkmark.svg`} alt="color red-400" />
+          </label>
+        </div>
+        <div class="fs__group">
+          <input type="radio" name="fs__font" value="cyan-300" />
+          <label class="fs__label--color bg-cyan-300 absolute-center">
+            <span class="sr-only">color cyan-300</span>
+            <img
+              src={`${base}assets/icon-checkmark.svg`}
+              alt="color cyan-300"
+            />
+          </label>
+        </div>
+        <div class="fs__group">
+          <input type="radio" name="fs__font" value="purple-400" />
+          <label class="fs__label--color bg-purple-400 absolute-center">
+            <span class="sr-only">color purple-400</span>
+            <img
+              src={`${base}assets/icon-checkmark.svg`}
+              alt="color purple-400"
+            />
+          </label>
+        </div>
+      </div>
+    </fieldset>
+    <button
+      id="fs__submit"
+      class="fs__submit bg-red-400 white text-preset-2--settings--font-1"
+      type="button">Apply</button
+    >
+  </form>
+</dialog>
 
 <style>
   /* .pomodoro-settings__button {
     width: fit-content;
     height: fit-content;
   } */
+
+  .form-settings__timer {
+    width: 100%;
+  }
+
+  .form-settings {
+    max-width: 100%;
+  }
+
+  .form-settings input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .form-settings__color label,
+  .form-settings__font label {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background-color: var(--clr-blue-100);
+  }
+
+  .form-settings input[type="radio"]:checked + label {
+    background-color: var(--clr-purple-400);
+    color: var(--clr-blue-850);
+  }
+
+  .form-settings__header {
+    border-bottom: 1px solid var(--clr-grey-200);
+  }
+
+  .fs__group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-block: 1rem;
+    width: 100%;
+    gap: 1rem;
+  }
+
+  .fs__label {
+    text-align: left;
+  }
+
+  .fs__input-wrapper,
+  .fs__label {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    line-height: 1;
+  }
+
+  .fs__input-wrapper {
+    border-radius: 10px;
+  }
+
+  .fs__input {
+    width: 100%;
+    line-height: 1;
+  }
+
+  .settings-dialog {
+    width: 100%;
+    max-width: 375px;
+  }
+
+  .form-settings__legend {
+    font-family: var(--ff-kumbh);
+    font-size: var(--fs-11);
+    letter-spacing: 0.264375rem;
+    margin: auto;
+  }
 
   .settings {
     transition: transform 0.5s ease;
@@ -68,6 +267,14 @@ console.log(base);
 </style>
 
 <script type="module">
+  document
+    .querySelectorAll('#form-settings input[type="number"]')
+    .forEach((input) => {
+      input.addEventListener("input", () => {
+        input.value = input.value.replace(/[^\d]/g, "");
+      });
+    });
+
   document.addEventListener("DOMContentLoaded", () => {
     const btn = document.getElementById("btnPomodoroSettings");
     const icon = btn.querySelector(".settings");
