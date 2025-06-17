@@ -10,6 +10,10 @@
   color: var(--clr-blue-100);
 }
 
+.blue-50 {
+  color: var(--clr-blue-50);
+}
+
 .grey-400 {
   color: var(--clr-grey-400);
 }

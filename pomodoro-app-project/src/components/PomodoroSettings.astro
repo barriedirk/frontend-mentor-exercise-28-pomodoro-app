@@ -14,19 +14,38 @@ import { base } from "../utils/base.js";
     </svg>
   </button>
 </section>
-<dialog id="modal-dialog" class="modal-dialog settings-dialog" open>
+<dialog
+  id="modal-dialog"
+  role="dialog"
+  class="modal-dialog settings-dialog relative"
+  aria-labelledby="form-settings-dialog-title"
+  aria-describedby="form-settings-dialog-desc"
+>
   <div
-    class="form-settings__header flex flex-row justify-between items-center p-5"
+    class="form-settings__header flex flex-row justify-between items-center p-6"
   >
-    <h2 class="text-preset-1--settings blue-900">Settings</h2>
-    <button id="btnCloseDialog" class="form-settings__close">
-      <img src={`${base}assets/icon-close.svg`} />
+    <h2
+      id="form-settings-dialog-title"
+      class="text-preset-1--settings blue-900"
+    >
+      Settings
+    </h2>
+    <p id="form-settings-dialog-desc" class="sr-only">
+      Customize your pomodoro preferences
+    </p>
+    <button
+      id="btnCloseDialog"
+      class="form-settings__close"
+      aria-label="Close settings dialog"
+    >
+      <img src={`${base}assets/icon-close.svg`} alt="" role="presentation" />
     </button>
   </div>
 
-  <form id="form-settings" class="form-settings p-5">
-    <fieldset>
-      <legend class="form-settings__legend blue-900">TIME (MINUTES)</legend>
+  <form id="form-settings" class="form-settings p-6">
+    <fieldset class="form-settings--time">
+      <legend class="sr-only">Time Section</legend>
+      <h3 class="form-settings__legend blue-900">TIME (MINUTES)</h3>
       <div class="form-settings__timer">
         <div class="fs__group">
           <label
@@ -76,60 +95,113 @@ import { base } from "../utils/base.js";
       </div>
     </fieldset>
     <hr />
-    <fieldset>
-      <legend class="form-settings__legend blue-900">FONT</legend>
+    <fieldset class="form-settings--font">
+      <legend class="sr-only">FONT</legend>
+      <h3 class="form-settings__legend blue-900">FONT</h3>
       <div class="form-settings__font">
         <div class="fs__group">
-          <input type="radio" name="fs__font" value="Kumbh Sans" />
+          <input
+            id="fs__font--Kumbh-Sans"
+            type="radio"
+            name="fs__font"
+            value="Kumbh Sans"
+          />
           <label
-            class="fs__label--font text-preset-2--settings--font-1 absolute-center"
-            >Aa</label
+            for="fs__font--Kumbh-Sans"
+            class="fs__label--font text-preset-2--settings--font-1 absolute-center bg-blue-50"
+            tabindex="0">Aa</label
           >
         </div>
         <div class="fs__group">
-          <input type="radio" name="fs__font" value="Roboto Slab" />
+          <input
+            id="fs__font--Roboto-Slab"
+            type="radio"
+            name="fs__font"
+            value="Roboto Slab"
+          />
           <label
-            class="fs__label--font text-preset-2--settings--font-2 absolute-center"
-            >Aa</label
+            for="fs__font--Roboto-Slab"
+            class="fs__label--font text-preset-2--settings--font-2 absolute-center bg-blue-50"
+            tabindex="0">Aa</label
           >
         </div>
         <div class="fs__group">
-          <input type="radio" name="fs__font" value="Space Mono" />
+          <input
+            id="fs__font--Space-Mono"
+            type="radio"
+            name="fs__font"
+            value="Space Mono"
+          />
           <label
-            class="fs__label--font text-preset-2--settings--font-3 absolute-center"
-            >Aa</label
+            for="fs__font--Space-Mono"
+            class="fs__label--font text-preset-2--settings--font-3 absolute-center bg-blue-50"
+            tabindex="0">Aa</label
           >
         </div>
       </div>
     </fieldset>
     <hr />
-    <fieldset>
-      <legend class="form-settings__legend blue-900">COLOR</legend>
+    <fieldset class="mb-2.5 form-settings--color">
+      <legend class="sr-only">COLOR</legend>
+      <h3 class="form-settings__legend blue-900">COLOR</h3>
       <div class="form-settings__color">
         <div class="fs__group">
-          <input type="radio" name="fs__font" value="red-400" />
-          <label class="fs__label--color bg-red-400 absolute-center">
+          <input
+            id="fs__color--red-400"
+            type="radio"
+            name="fs__color"
+            value="red-400"
+          />
+          <label
+            for="fs__color--red-400"
+            class="fs__label--color bg-red-400 absolute-center"
+            tabindex="0"
+          >
             <span class="sr-only">color red-400</span>
-            <img src={`${base}assets/icon-checkmark.svg`} alt="color red-400" />
-          </label>
-        </div>
-        <div class="fs__group">
-          <input type="radio" name="fs__font" value="cyan-300" />
-          <label class="fs__label--color bg-cyan-300 absolute-center">
-            <span class="sr-only">color cyan-300</span>
             <img
               src={`${base}assets/icon-checkmark.svg`}
-              alt="color cyan-300"
+              alt=""
+              role="presentation"
             />
           </label>
         </div>
         <div class="fs__group">
-          <input type="radio" name="fs__font" value="purple-400" />
-          <label class="fs__label--color bg-purple-400 absolute-center">
+          <input
+            id="fs__color--cyan-300"
+            type="radio"
+            name="fs__color"
+            value="cyan-300"
+          />
+          <label
+            for="fs__color--cyan-300"
+            class="fs__label--color bg-cyan-300 absolute-center"
+            tabindex="0"
+          >
+            <span class="sr-only">color cyan-300</span>
+            <img
+              src={`${base}assets/icon-checkmark.svg`}
+              alt=""
+              role="presentation"
+            />
+          </label>
+        </div>
+        <div class="fs__group">
+          <input
+            id="fs__color--purple-400"
+            type="radio"
+            name="fs__color"
+            value="purple-400"
+          />
+          <label
+            for="fs__color--purple-400"
+            class="fs__label--color bg-purple-400 absolute-center"
+            tabindex="0"
+          >
             <span class="sr-only">color purple-400</span>
             <img
               src={`${base}assets/icon-checkmark.svg`}
-              alt="color purple-400"
+              alt=""
+              role="presentation"
             />
           </label>
         </div>
@@ -137,24 +209,34 @@ import { base } from "../utils/base.js";
     </fieldset>
     <button
       id="fs__submit"
-      class="fs__submit bg-red-400 white text-preset-2--settings--font-1"
-      type="button">Apply</button
+      type="submit"
+      class="fs__submit bg-red-400 white py-3 px-8 rounded-3xl absolute -translate-x-1/2"
+      >Apply</button
     >
   </form>
 </dialog>
 
 <style>
-  /* .pomodoro-settings__button {
-    width: fit-content;
-    height: fit-content;
-  } */
-
-  .form-settings__timer {
-    width: 100%;
+  .fs__submit {
+    font-family: var(--ff-kumbh);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-16);
+    line-height: var(--lh-125);
   }
 
   .form-settings {
     max-width: 100%;
+  }
+
+  .form-settings hr {
+    height: 1px;
+    color: var(--clr-grey-200);
+    background: var(--clr-grey-200);
+    margin-block: 20px;
+  }
+
+  .form-settings__timer {
+    width: 100%;
   }
 
   .form-settings input[type="radio"] {
@@ -163,17 +245,40 @@ import { base } from "../utils/base.js";
     pointer-events: none;
   }
 
+  .form-settings__color .fs__group,
+  .form-settings__font .fs__group {
+    flex: 0 0 0%;
+  }
+
+  .form-settings__color,
+  .form-settings__font {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+  }
+
   .form-settings__color label,
   .form-settings__font label {
     border-radius: 50%;
     width: 40px;
     height: 40px;
-    background-color: var(--clr-blue-100);
+    transition: background-color 0.3s ease-in-out;
   }
 
-  .form-settings input[type="radio"]:checked + label {
-    background-color: var(--clr-purple-400);
-    color: var(--clr-blue-850);
+  .form-settings__color img {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .form-settings__color input[type="radio"]:checked + label img {
+    opacity: 1;
+  }
+
+  .form-settings__font input[type="radio"]:checked + label {
+    background-color: var(--clr-blue-950);
+    color: var(--clr-white);
   }
 
   .form-settings__header {
@@ -213,13 +318,15 @@ import { base } from "../utils/base.js";
   .settings-dialog {
     width: 100%;
     max-width: 375px;
+    transition: width 1s ease-in-out;
   }
 
   .form-settings__legend {
     font-family: var(--ff-kumbh);
     font-size: var(--fs-11);
+    font-weight: var(--fw-bold);
     letter-spacing: 0.264375rem;
-    margin: auto;
+    margin: 0 auto 20px auto;
   }
 
   .settings {
@@ -264,9 +371,78 @@ import { base } from "../utils/base.js";
     padding: 0.5rem;
     line-height: 1;
   }
+
+  @media screen and (min-width: 34em) {
+    .settings-dialog {
+      max-width: 540px;
+    }
+
+    .form-settings__legend {
+      text-align: left;
+      margin: 0;
+    }
+
+    .form-settings__timer {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .form-settings__timer .fs__group {
+      flex-direction: column;
+      align-items: self-start;
+      gap: 0.5rem;
+    }
+
+    .form-settings--font,
+    .form-settings--color {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-settings__legend {
+    }
+  }
 </style>
 
 <script type="module">
+  document
+    .querySelectorAll(
+      '.form-settings__color input[type="radio"], .form-settings__font input[type="radio"]'
+    )
+    .forEach((input) => {
+      input.addEventListener("keydown", (keyboardEvent) => {
+        if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
+          event.preventDefault();
+          input.checked = true;
+        }
+      });
+    });
+
+  document
+    .querySelectorAll(
+      ".form-settings__color .fs__group label, .form-settings__font .fs__group label"
+    )
+    .forEach((label) => {
+      label.addEventListener("keydown", (keyboardEvent) => {
+        if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
+          event.preventDefault();
+          const inputId = label.getAttribute("for");
+          if (!inputId) return;
+
+          const input = document.getElementById(inputId);
+          if (input) {
+            input.checked = true;
+            input.focus();
+            console.log(`Selected via label: ${input.value}`);
+          }
+        }
+      });
+    });
+
   document
     .querySelectorAll('#form-settings input[type="number"]')
     .forEach((input) => {
@@ -276,21 +452,43 @@ import { base } from "../utils/base.js";
     });
 
   document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("btnPomodoroSettings");
-    const icon = btn.querySelector(".settings");
+    const btnOpenDialog = document.getElementById("btnPomodoroSettings");
+    const icon = btnOpenDialog.querySelector(".settings");
+    const btnCloseDialog = document.getElementById("btnCloseDialog");
+    const modalDialog = document.getElementById("modal-dialog");
+    const btnApplyChanges = document.getElementById("fs__submit");
 
     let touched = false;
 
-    // btn.addEventListener("touchstart", () => {
-    //   if (!touched) {
-    //     icon.classList.add("rotating");
-    //     setTimeout(() => icon.classList.remove("rotating"), 400);
-    //     touched = true;
-    //     setTimeout(() => (touched = false), 500); // prevent double tap
-    //   }
-    // });
+    btnApplyChanges.addEventListener("click", (evt) => {
+      evt.preventDefault();
 
-    btn.addEventListener("touchstart", () => {
+      // @todo, review
+
+      const form = document.getElementById("form-settings");
+      const formData = new FormData(form);
+      let output = "";
+
+      for (const [key, value] of formData) {
+        output += `${key}: ${value}\n`;
+      }
+
+      console.log(output);
+    });
+
+    btnOpenDialog.addEventListener("click", (evt) => {
+      evt.preventDefault();
+
+      modalDialog.showModal();
+    });
+
+    btnCloseDialog.addEventListener("click", (evt) => {
+      evt.preventDefault();
+
+      modalDialog.close();
+    });
+
+    btnOpenDialog.addEventListener("touchstart", () => {
       if (!touched) {
         icon.classList.add("rotating", "jelly");
         setTimeout(() => {
@@ -301,7 +499,7 @@ import { base } from "../utils/base.js";
       }
     });
 
-    btn.addEventListener("mouseenter", () => {
+    btnOpenDialog.addEventListener("mouseenter", () => {
       icon.classList.add("jelly");
       setTimeout(() => icon.classList.remove("jelly"), 500);
     });

@@ -20,10 +20,11 @@ body.fade-in {
 }
 
 dialog.modal-dialog::-webkit-scrollbar {
-  display: none;           
+  display: none;
 }
 
 dialog.modal-dialog {
+  overflow: inherit;
   scrollbar-width: none;   
   -ms-overflow-style: none; 
   color: var(--clr-blue-950);
@@ -53,5 +54,5 @@ dialog.modal-dialog {
 }
 
 dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.2);
 }

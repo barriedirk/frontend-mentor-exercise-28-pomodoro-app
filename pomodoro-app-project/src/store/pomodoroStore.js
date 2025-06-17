@@ -1,4 +1,11 @@
 const initialState = {
+  time_pomodoro: 50,
+  time_short_break: 34,
+  time_long_break: 53,
+
+  fs__font: "Space Mono",
+  fs__color: "cyan-300",
+
   sessionTime: 25 * 60, // 25 minutes in seconds
   breakTime: 5 * 60, // 5 minutes in seconds
   isRunning: false,
@@ -7,6 +14,7 @@ const initialState = {
 };
 
 const actionTypes = {
+  APPLY: "APPLY",
   START: "START",
   STOP: "STOP",
   RESET: "RESET",
