@@ -30,6 +30,9 @@
   --ff-roboto: "Roboto Slab", serif;
   --ff-space: "Space Mono", monospace;
 
+  --clr-pomodoro: var(--clr-purple-400);
+  --ff-pomodoro: var(--ff-kumbh);
+
   --fw-thin: 100;
   --fw-extralight: 200;
   --fw-light: 300;

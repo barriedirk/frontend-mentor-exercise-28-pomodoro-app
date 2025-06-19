@@ -55,7 +55,7 @@ import { base } from "../utils/base.js";
           <div class="fs__input-wrapper bg-blue-50 p-4">
             <input
               id="time_pomodoro"
-              name="time_pomodoro"
+              name="timePomodoro"
               class="fs__input text-preset-3--settings"
               value="11"
               type="number"
@@ -70,7 +70,7 @@ import { base } from "../utils/base.js";
           <div class="fs__input-wrapper bg-blue-50 p-4">
             <input
               id="time_short_break"
-              name="time_short_break"
+              name="timeShortBreak"
               class="fs__input text-preset-3--settings"
               value="11"
               type="number"
@@ -85,7 +85,7 @@ import { base } from "../utils/base.js";
           <div class="fs__input-wrapper bg-blue-50 p-4">
             <input
               id="time_long_break"
-              name="time_long_break"
+              name="timeLongBreak"
               class="fs__input text-preset-3--settings"
               value="11"
               type="number"
@@ -103,8 +103,8 @@ import { base } from "../utils/base.js";
           <input
             id="fs__font--Kumbh-Sans"
             type="radio"
-            name="fs__font"
-            value="Kumbh Sans"
+            name="font"
+            value="--ff-kumbh"
           />
           <label
             for="fs__font--Kumbh-Sans"
@@ -116,8 +116,8 @@ import { base } from "../utils/base.js";
           <input
             id="fs__font--Roboto-Slab"
             type="radio"
-            name="fs__font"
-            value="Roboto Slab"
+            name="font"
+            value="--ff-roboto"
           />
           <label
             for="fs__font--Roboto-Slab"
@@ -129,8 +129,8 @@ import { base } from "../utils/base.js";
           <input
             id="fs__font--Space-Mono"
             type="radio"
-            name="fs__font"
-            value="Space Mono"
+            name="font"
+            value="--ff-space"
           />
           <label
             for="fs__font--Space-Mono"
@@ -149,8 +149,8 @@ import { base } from "../utils/base.js";
           <input
             id="fs__color--red-400"
             type="radio"
-            name="fs__color"
-            value="red-400"
+            name="color"
+            value="--clr-red-400"
           />
           <label
             for="fs__color--red-400"
@@ -169,8 +169,8 @@ import { base } from "../utils/base.js";
           <input
             id="fs__color--cyan-300"
             type="radio"
-            name="fs__color"
-            value="cyan-300"
+            name="color"
+            value="--clr-cyan-300"
           />
           <label
             for="fs__color--cyan-300"
@@ -189,8 +189,8 @@ import { base } from "../utils/base.js";
           <input
             id="fs__color--purple-400"
             type="radio"
-            name="fs__color"
-            value="purple-400"
+            name="color"
+            value="--clr-purple-400"
           />
           <label
             for="fs__color--purple-400"
@@ -408,15 +408,25 @@ import { base } from "../utils/base.js";
   }
 </style>
 
-<script type="module">
+<script>
+  import { applySettings } from "../scripts/PomodoroStore.js";
+
+  type ApplySettingsActionParams = {
+    timePomodoro: any;
+    timeShortBreak: any;
+    timeLongBreak: any;
+    font: any;
+    color: any;
+  };
+
   document
     .querySelectorAll(
       '.form-settings__color input[type="radio"], .form-settings__font input[type="radio"]'
     )
-    .forEach((input) => {
-      input.addEventListener("keydown", (keyboardEvent) => {
-        if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
-          event.preventDefault();
+    .forEach((input: any) => {
+      input.addEventListener("keydown", (key: KeyboardEvent) => {
+        if (key.key === "Enter" || key.key === " ") {
+          event!.preventDefault();
           input.checked = true;
         }
       });
@@ -426,14 +436,14 @@ import { base } from "../utils/base.js";
     .querySelectorAll(
       ".form-settings__color .fs__group label, .form-settings__font .fs__group label"
     )
-    .forEach((label) => {
-      label.addEventListener("keydown", (keyboardEvent) => {
-        if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
+    .forEach((label: any) => {
+      label.addEventListener("keydown", (event: KeyboardEvent) => {
+        if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           const inputId = label.getAttribute("for");
           if (!inputId) return;
 
-          const input = document.getElementById(inputId);
+          const input = document.getElementById(inputId) as HTMLInputElement;
           if (input) {
             input.checked = true;
             input.focus();
@@ -445,7 +455,7 @@ import { base } from "../utils/base.js";
 
   document
     .querySelectorAll('#form-settings input[type="number"]')
-    .forEach((input) => {
+    .forEach((input: any) => {
       input.addEventListener("input", () => {
         input.value = input.value.replace(/[^\d]/g, "");
       });
@@ -453,55 +463,55 @@ import { base } from "../utils/base.js";
 
   document.addEventListener("DOMContentLoaded", () => {
     const btnOpenDialog = document.getElementById("btnPomodoroSettings");
-    const icon = btnOpenDialog.querySelector(".settings");
+    const icon = btnOpenDialog!.querySelector(".settings");
     const btnCloseDialog = document.getElementById("btnCloseDialog");
-    const modalDialog = document.getElementById("modal-dialog");
+    const modalDialog = document.getElementById("modal-dialog") as any;
     const btnApplyChanges = document.getElementById("fs__submit");
 
     let touched = false;
 
-    btnApplyChanges.addEventListener("click", (evt) => {
+    btnApplyChanges!.addEventListener("click", (evt) => {
       evt.preventDefault();
 
       // @todo, review
 
-      const form = document.getElementById("form-settings");
-      const formData = new FormData(form);
-      let output = "";
+      const form = document.getElementById("form-settings")!;
+      const formData = new FormData(form as any);
+      let output: Record<string, any> = {};
 
       for (const [key, value] of formData) {
-        output += `${key}: ${value}\n`;
+        output[key] = value;
       }
 
-      console.log(output);
+      applySettings(output as ApplySettingsActionParams);
     });
 
-    btnOpenDialog.addEventListener("click", (evt) => {
+    btnOpenDialog!.addEventListener("click", (evt) => {
       evt.preventDefault();
 
       modalDialog.showModal();
     });
 
-    btnCloseDialog.addEventListener("click", (evt) => {
+    btnCloseDialog!.addEventListener("click", (evt) => {
       evt.preventDefault();
 
-      modalDialog.close();
+      modalDialog!.close();
     });
 
-    btnOpenDialog.addEventListener("touchstart", () => {
+    btnOpenDialog!.addEventListener("touchstart", () => {
       if (!touched) {
-        icon.classList.add("rotating", "jelly");
+        icon!.classList.add("rotating", "jelly");
         setTimeout(() => {
-          icon.classList.remove("rotating", "jelly");
+          icon!.classList.remove("rotating", "jelly");
         }, 500);
         touched = true;
         setTimeout(() => (touched = false), 600);
       }
     });
 
-    btnOpenDialog.addEventListener("mouseenter", () => {
-      icon.classList.add("jelly");
-      setTimeout(() => icon.classList.remove("jelly"), 500);
+    btnOpenDialog!.addEventListener("mouseenter", () => {
+      icon!.classList.add("jelly");
+      setTimeout(() => icon!.classList.remove("jelly"), 500);
     });
   });
 </script>

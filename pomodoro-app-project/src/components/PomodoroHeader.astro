@@ -11,7 +11,7 @@ import { base } from "../utils/base.js";
   </h1>
 
   <form
-    id="f-options"
+    id="f-pomodoro-mode"
     class="pomodoro__options w-full flex flex-row justify-center items-center p-2 text-preset-3--mobile--font-3 gap-3"
   >
     <fieldset class="flex gap-3" aria-labelledby="pomodoro-label">
@@ -21,7 +21,7 @@ import { base } from "../utils/base.js";
         <input
           id="f-option-pomodoro"
           type="radio"
-          name="f-option"
+          name="pomodoroMode"
           value="pomodoro"
           aria-labelledby="label-pomodoro"
         />
@@ -37,7 +37,7 @@ import { base } from "../utils/base.js";
         <input
           id="f-option-short-break"
           type="radio"
-          name="f-option"
+          name="pomodoroMode"
           value="short-break"
           aria-labelledby="label-short-break"
         />
@@ -53,7 +53,7 @@ import { base } from "../utils/base.js";
         <input
           id="f-option-long-break"
           type="radio"
-          name="f-option"
+          name="pomodoroMode"
           value="long-break"
           aria-labelledby="label-long-break"
         />
@@ -69,45 +69,61 @@ import { base } from "../utils/base.js";
 </section>
 
 <script type="module" is:inline>
-  document.querySelectorAll('input[name="f-option"]').forEach((input) => {
-    input.addEventListener("keydown", (keyboardEvent) => {
-      if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
-        event.preventDefault();
-        input.checked = true;
-      }
-    });
-  });
+  const savePomodoroMode = () => {
+    const form = document.getElementById("f-pomodoro-mode");
+    const formData = new FormData(form);
+    let output = "";
 
-  document.querySelectorAll(".pomodoro__option label").forEach((label) => {
-    label.addEventListener("keydown", (keyboardEvent) => {
-      if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
-        event.preventDefault();
-        const inputId = label.getAttribute("for");
-        if (!inputId) return;
+    for (const [key, value] of formData) {
+      output += `${key}: ${value}\n`;
+    }
 
-        const input = document.getElementById(inputId);
-        if (input) {
-          input.checked = true;
-          input.focus();
-          console.log(`Selected via label: ${input.value}`);
+    console.log(output);
+  };
+
+  document
+    .querySelectorAll('#f-pomodoro-mode input[type="radio"]')
+    .forEach((input) => {
+      input.addEventListener("change", (event) => {
+        if (event.target.checked) {
+          savePomodoroMode();
         }
-      }
+      });
+
+      input.addEventListener("keydown", (keyboardEvent) => {
+        if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
+          event.preventDefault();
+          input.checked = true;
+        }
+      });
     });
-  });
+
+  document
+    .querySelectorAll("#f-pomodoro-mode .pomodoro__option label")
+    .forEach((label) => {
+      label.addEventListener("keydown", (keyboardEvent) => {
+        if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
+          event.preventDefault();
+          const inputId = label.getAttribute("for");
+          if (!inputId) return;
+
+          const input = document.getElementById(inputId);
+          if (input) {
+            input.checked = true;
+            input.focus();
+            console.log(`Selected via label: ${input.value}`);
+          }
+        }
+      });
+    });
 </script>
 
 <style>
-  .pomodoro__header-title {
-    font-family: var(--ff-kumbh);
-    font-weight: var(--fw-bold);
-    font-size: var(--fs-24);
-    line-height: normal;
-  }
-
   .pomodoro__options {
     background-color: var(--clr-blue-900);
     border-radius: 31.5px;
     width: fit-content;
+    font-family: var(--ff-pomodoro);
   }
 
   .pomodoro__option {
@@ -133,18 +149,12 @@ import { base } from "../utils/base.js";
   }
 
   .pomodoro__options input[type="radio"]:checked + label {
-    background-color: var(--clr-purple-400);
+    background-color: var(--clr-pomodoro);
     color: var(--clr-blue-850);
   }
 
   .pomodoro__option label:focus {
     outline: 2px solid var(--clr-cyan-300);
     outline-offset: 2px;
-  }
-
-  @media screen and (min-width: 48em) {
-    .pomodoro__header-title {
-      font-size: var(--fs-32);
-    }
   }
 </style>

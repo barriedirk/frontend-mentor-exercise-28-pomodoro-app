@@ -73,8 +73,13 @@ className += " flex flex-col";
       href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&family=Roboto+Slab:wght@100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
       rel="stylesheet"
     />
-
     <ClientRouter />
+
+    <script>
+      import { initStore } from "../scripts/PomodoroStore.js";
+
+      initStore();
+    </script>
   </head>
   <body class={className}>
     <main>

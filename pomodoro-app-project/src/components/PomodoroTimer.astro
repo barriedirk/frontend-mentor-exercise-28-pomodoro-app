@@ -14,9 +14,9 @@
       >
         <div
           class="pomodoro-progress flex flex-col justify-center items-center"
-          style="--progress: 20;"
+          style="--progress: 0;"
         >
-          <!-- <div class="progress-dot"></div> -->
+          <div class="progress-dot"></div>
           <div
             class="pomodoro-display--container flex flex-col justify-center items-center gap-4"
           >
@@ -27,7 +27,8 @@
             <button
               type="button"
               id="btn-timer"
-              class="text-preset-2--mobile--font-3 uppercase">Start</button
+              class="pomodoro-timer-btn text-preset-2--mobile--font-3 uppercase"
+              aria-pressed="false">Start</button
             >
           </div>
         </div>
@@ -37,52 +38,81 @@
 </section>
 
 <script type="module">
-  // const progressDot = document.querySelector(".progress-dot");
-  //
-  // function updateProgress(percent, remainingSeconds) {
-  //   progressEl.style.setProperty("--progress", percent.toFixed(2));
-  //
-  //   const angle = (percent / 100) * 360;
-  //   progressDot.style.transform = `translate(-50%, -100%) rotate(${angle}deg) translateY(calc(var(--size) / 2 - var(--thickness) / 2))`;
-  //
-  //   const minutes = Math.floor(remainingSeconds / 60);
-  //   const seconds = remainingSeconds % 60;
-  //   timeDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  // }
+  (() => {
+    const progressDot = document.querySelector(".progress-dot");
 
-  //
-  //
-  //
+    function updateProgress(percent, remainingSeconds) {
+      progressEl.style.setProperty("--progress", percent.toFixed(2));
 
-  // document.addEventListener("DOMContentLoaded", () => {
-  //   const timerEl = document.querySelector(".pomodoro-timer");
-  //   const progressEl = timerEl.querySelector(".circle-progress");
-  //   const timeDisplay = timerEl.querySelector(".time-display");
+      const angle = (percent / 100) * 360;
+      progressDot.style.transform = `translate(-50%, -100%) rotate(${angle}deg) translateY(calc(var(--size) / 2 - var(--thickness) / 2))`;
 
-  //   const totalDuration = parseInt(timerEl.dataset.duration, 10); // in seconds
-  //   let timeRemaining = totalDuration;
+      const minutes = Math.floor(remainingSeconds / 60);
+      const seconds = remainingSeconds % 60;
+      timeDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    }
 
-  //   const interval = setInterval(() => {
-  //     timeRemaining--;
+    const btnTimer = document.querySelector(".pomodoro-timer-btn");
+    const timerEl = document.querySelector(".pomodoro-timer");
+    const progressEl = timerEl.querySelector(".pomodoro-progress");
+    const timeDisplay = timerEl.querySelector(".pomodoro-display");
 
-  //     // Calculate percent complete
-  //     const percent = ((totalDuration - timeRemaining) / totalDuration) * 100;
-  //     progressEl.style.setProperty("--progress", percent.toFixed(2));
+    const totalDuration = 475; // parseInt(timerEl.dataset.duration, 10); // in seconds
+    let timeRemaining = totalDuration;
+    let interval = undefined;
 
-  //     // Update time display
-  //     const minutes = Math.floor(timeRemaining / 60);
-  //     const seconds = timeRemaining % 60;
-  //     timeDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    const start = () => {
+      return setInterval(() => {
+        timeRemaining--;
 
-  //     if (timeRemaining <= 0) {
-  //       clearInterval(interval);
-  //       timeDisplay.textContent = "00:00";
-  //     }
-  //   }, 1000);
-  // });
+        // Calculate percent complete
+        const percent = ((totalDuration - timeRemaining) / totalDuration) * 100;
+        progressEl.style.setProperty("--progress", percent.toFixed(2));
+
+        // Update time display
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        timeDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+
+        // updateProgress(percent, remainingSeconds);
+
+        if (timeRemaining <= 0) {
+          clearInterval(interval);
+          timeDisplay.textContent = "00:00";
+        }
+      }, 1000);
+    };
+
+    btnTimer.addEventListener("click", (evt) => {
+      evt.preventDefault();
+
+      const isPressed = btnTimer.getAttribute("aria-pressed") === "true";
+
+      switch (isPressed) {
+        case true:
+          btnTimer.setAttribute("aria-pressed", "false");
+          btnTimer.innerText = "Start";
+
+          clearInterval(interval);
+          break;
+
+        case false:
+          btnTimer.setAttribute("aria-pressed", "true");
+          btnTimer.innerText = "Stop";
+
+          interval = start();
+          break;
+      }
+    });
+  })();
 </script>
 
 <style>
+  .pomodoro-display,
+  .pomodoro-btn-timer {
+    font-family: var(--ff-pomodoro);
+  }
+
   .pomodoro-timer {
     display: flex;
     justify-content: center;
@@ -94,7 +124,7 @@
     position: absolute;
     width: 12px;
     height: 12px;
-    background: #f87070;
+    background: var(--clr-pomodoro);
     border-radius: 50%;
     top: 50%;
     left: 50%;
@@ -146,9 +176,8 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    background:
-      conic-gradient(
-        var(--clr-purple-400) calc(var(--progress) * 1%),
+    background: conic-gradient(
+        var(--clr-pomodoro) calc(var(--progress) * 1%),
         transparent 0%
       ),
       var(--clr-blue-50-1);
