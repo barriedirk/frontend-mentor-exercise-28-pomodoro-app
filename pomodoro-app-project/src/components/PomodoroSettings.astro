@@ -16,6 +16,7 @@ import { base } from "../utils/base.js";
 </section>
 <dialog
   id="modal-dialog"
+  aria-modal="true"
   role="dialog"
   class="modal-dialog settings-dialog relative"
   aria-labelledby="form-settings-dialog-title"
@@ -57,8 +58,11 @@ import { base } from "../utils/base.js";
               id="time_pomodoro"
               name="timePomodoro"
               class="fs__input text-preset-3--settings"
-              value="11"
+              value="0"
               type="number"
+              min="1"
+              max="999"
+              inputmode="numeric"
             />
           </div>
         </div>
@@ -72,8 +76,11 @@ import { base } from "../utils/base.js";
               id="time_short_break"
               name="timeShortBreak"
               class="fs__input text-preset-3--settings"
-              value="11"
+              value="0"
               type="number"
+              min="1"
+              max="999"
+              inputmode="numeric"
             />
           </div>
         </div>
@@ -87,8 +94,11 @@ import { base } from "../utils/base.js";
               id="time_long_break"
               name="timeLongBreak"
               class="fs__input text-preset-3--settings"
-              value="11"
+              value="0"
               type="number"
+              min="1"
+              max="999"
+              inputmode="numeric"
             />
           </div>
         </div>
@@ -226,6 +236,10 @@ import { base } from "../utils/base.js";
 
   .form-settings {
     max-width: 100%;
+  }
+
+  .form-settings input[type="number"] {
+    outline: none;
   }
 
   .form-settings hr {
@@ -409,8 +423,6 @@ import { base } from "../utils/base.js";
 </style>
 
 <script>
-  import { applySettings } from "../scripts/PomodoroStore.js";
-
   type ApplySettingsActionParams = {
     timePomodoro: any;
     timeShortBreak: any;
@@ -419,61 +431,75 @@ import { base } from "../utils/base.js";
     color: any;
   };
 
-  document
-    .querySelectorAll(
-      '.form-settings__color input[type="radio"], .form-settings__font input[type="radio"]'
-    )
-    .forEach((input: any) => {
-      input.addEventListener("keydown", (key: KeyboardEvent) => {
-        if (key.key === "Enter" || key.key === " ") {
-          event!.preventDefault();
-          input.checked = true;
-        }
-      });
-    });
+  import {
+    applySettings,
+    addListener,
+    getState,
+  } from "../scripts/PomodoroStore.js";
+  import {
+    setInputValue,
+    setAccesibilityRadio,
+    onlyInputNumberAllowed,
+  } from "../lib/utils/utils.js";
 
-  document
-    .querySelectorAll(
-      ".form-settings__color .fs__group label, .form-settings__font .fs__group label"
-    )
-    .forEach((label: any) => {
-      label.addEventListener("keydown", (event: KeyboardEvent) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          const inputId = label.getAttribute("for");
-          if (!inputId) return;
-
-          const input = document.getElementById(inputId) as HTMLInputElement;
-          if (input) {
-            input.checked = true;
-            input.focus();
-            console.log(`Selected via label: ${input.value}`);
-          }
-        }
-      });
-    });
-
-  document
-    .querySelectorAll('#form-settings input[type="number"]')
-    .forEach((input: any) => {
-      input.addEventListener("input", () => {
-        input.value = input.value.replace(/[^\d]/g, "");
-      });
-    });
-
-  document.addEventListener("DOMContentLoaded", () => {
+  (async () => {
     const btnOpenDialog = document.getElementById("btnPomodoroSettings");
     const icon = btnOpenDialog!.querySelector(".settings");
     const btnCloseDialog = document.getElementById("btnCloseDialog");
     const modalDialog = document.getElementById("modal-dialog") as any;
     const btnApplyChanges = document.getElementById("fs__submit");
 
-    let touched = false;
+    const { timePomodoro, timeShortBreak, timeLongBreak, font, color } =
+      getState();
+
+    const listener = async (store: any) => {
+      const { font, color } = store.getState();
+
+      document.body.style.setProperty("--clr-pomodoro", `var(${color})`);
+      document.body.style.setProperty("--ff-pomodoro", `var(${font})`);
+    };
+
+    addListener(listener);
+
+    setInputValue(
+      ".pomodoro-settings input[name='timePomodoro']",
+      "value",
+      timePomodoro
+    );
+
+    setInputValue(
+      ".pomodoro-settings input[name='timeLongBreak']",
+      "value",
+      timeLongBreak
+    );
+
+    setInputValue(
+      ".pomodoro-settings input[name='timeShortBreak']",
+      "value",
+      timeShortBreak
+    );
+
+    setInputValue(
+      `.pomodoro-settings input[name="font"][value="${font}"]`,
+      "checked",
+      true
+    );
+
+    setInputValue(
+      `.pomodoro-settings input[name="color"][value="${color}"]`,
+      "checked",
+      true
+    );
+
+    setAccesibilityRadio(
+      '.form-settings__color input[type="radio"], .form-settings__font input[type="radio"]',
+      ".form-settings__color .fs__group label, .form-settings__font .fs__group label"
+    );
+
+    onlyInputNumberAllowed('#form-settings input[type="number"]');
 
     btnApplyChanges!.addEventListener("click", (evt) => {
       evt.preventDefault();
-
-      // @todo, review
 
       const form = document.getElementById("form-settings")!;
       const formData = new FormData(form as any);
@@ -484,19 +510,43 @@ import { base } from "../utils/base.js";
       }
 
       applySettings(output as ApplySettingsActionParams);
+
+      modalDialog!.close();
     });
+
+    let lastFocusedElement: HTMLElement | null = null;
 
     btnOpenDialog!.addEventListener("click", (evt) => {
       evt.preventDefault();
 
+      lastFocusedElement = document.activeElement as HTMLElement;
+
       modalDialog.showModal();
+
+      const focusable = modalDialog.querySelector(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      ) as HTMLElement;
+      focusable?.focus();
     });
 
     btnCloseDialog!.addEventListener("click", (evt) => {
       evt.preventDefault();
 
-      modalDialog!.close();
+      modalDialog.close();
+
+      lastFocusedElement?.focus();
     });
+
+    modalDialog.addEventListener("keydown", (evt: KeyboardEvent) => {
+      if (evt.key === "Escape") {
+        evt.preventDefault();
+
+        modalDialog.close();
+        lastFocusedElement?.focus();
+      }
+    });
+
+    let touched = false;
 
     btnOpenDialog!.addEventListener("touchstart", () => {
       if (!touched) {
@@ -513,5 +563,5 @@ import { base } from "../utils/base.js";
       icon!.classList.add("jelly");
       setTimeout(() => icon!.classList.remove("jelly"), 500);
     });
-  });
+  })();
 </script>

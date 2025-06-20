@@ -1,6 +1,8 @@
 import { store, applySettingsAction } from "../lib/store/pomodoroRedux.js";
 import { setStateToLocalStorage } from "../lib/utils/utils.js";
 
+// export { store };
+
 export function initStore() {
   const saveDataInLocalStorage = async () => {
     const state = store.getState();
@@ -10,6 +12,12 @@ export function initStore() {
   };
 
   store.subscribe(saveDataInLocalStorage);
+}
+
+export function addListener(listenerFn) {
+  store.subscribe(() => listenerFn(store));
+
+  listenerFn(store);
 }
 
 export const getState = () => store.getState();
