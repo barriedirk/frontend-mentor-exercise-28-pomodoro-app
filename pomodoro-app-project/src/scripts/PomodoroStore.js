@@ -1,4 +1,11 @@
-import { store, applySettingsAction } from "../lib/store/pomodoroRedux.js";
+import {
+  store,
+  applySettingsAction,
+  updateModeAction,
+  updateTimerAction,
+  startTimerAction,
+  stopTimerAction,
+} from "../lib/store/pomodoroRedux.js";
 import { setStateToLocalStorage } from "../lib/utils/utils.js";
 
 // export { store };
@@ -26,22 +33,41 @@ export const applySettings = ({
   timePomodoro,
   timeShortBreak,
   timeLongBreak,
-  font,
   color,
+  font,
+  letterSpacing,
 }) => {
-  console.log({
-    timePomodoro,
-    timeShortBreak,
-    timeLongBreak,
-    font,
-    color,
-  });
-
   applySettingsAction(store, {
     timePomodoro,
     timeShortBreak,
     timeLongBreak,
     font,
     color,
+    letterSpacing,
   });
+};
+
+export const updateMode = ({ pomodoroMode }) => {
+  updateModeAction(store, {
+    pomodoroMode,
+  });
+};
+
+export const updateTimer = ({ totalDuration, timeRemaining, isRunning }) => {
+  updateTimerAction(store, {
+    totalDuration,
+    timeRemaining,
+    isRunning,
+  });
+};
+
+export const startTimer = ({ totalDuration, timeRemaining }) => {
+  startTimerAction(store, {
+    totalDuration,
+    timeRemaining,
+  });
+};
+
+export const stopTimer = () => {
+  stopTimerAction(store);
 };

@@ -32,6 +32,7 @@
 
   --clr-pomodoro: var(--clr-purple-400);
   --ff-pomodoro: var(--ff-kumbh);
+  --ls-pomodoro: var(--ls--10);
 
   --fw-thin: 100;
   --fw-extralight: 200;

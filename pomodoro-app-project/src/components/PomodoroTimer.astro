@@ -13,6 +13,7 @@
         class="pomodoro-progress-inner flex flex-col justify-center items-center"
       >
         <div
+          id="pomodoro-progress"
           class="pomodoro-progress flex flex-col justify-center items-center"
           style="--progress: 0;"
         >
@@ -21,15 +22,18 @@
             class="pomodoro-display--container flex flex-col justify-center items-center gap-4"
           >
             <span
+              id="pomodoro-display"
               class="pomodoro-display text-preset-1--mobile--font-3 blue-100"
-              >25:00</span
+              >00:00</span
             >
-            <button
-              type="button"
-              id="btn-timer"
-              class="pomodoro-timer-btn text-preset-2--mobile--font-3 uppercase"
-              aria-pressed="false">Start</button
-            >
+            <div class="flex flex-row gap-2">
+              <button
+                type="button"
+                id="btn-timer"
+                class="pomodoro-timer-btn text-preset-2--mobile--font-3 uppercase"
+                aria-pressed="false">Start</button
+              >
+            </div>
           </div>
         </div>
       </div>
@@ -37,49 +41,174 @@
   </div>
 </section>
 
-<script type="module">
-  (() => {
-    const progressDot = document.querySelector(".progress-dot");
+<script>
+  import {
+    updateMode,
+    getState,
+    updateTimer,
+    startTimer,
+    stopTimer,
+    addListener,
+  } from "../scripts/PomodoroStore.js";
+  import { POMODORO_VALUES, POMODORO_MODE } from "../lib/utils/constants.js";
 
-    function updateProgress(percent, remainingSeconds) {
-      progressEl.style.setProperty("--progress", percent.toFixed(2));
+  (async () => {
+    let { pomodoroMode, timeRemaining, totalDuration, isRunning } = getState();
 
-      const angle = (percent / 100) * 360;
-      progressDot.style.transform = `translate(-50%, -100%) rotate(${angle}deg) translateY(calc(var(--size) / 2 - var(--thickness) / 2))`;
+    console.log("INITIAL", {
+      pomodoroMode,
+      timeRemaining,
+      totalDuration,
+      isRunning,
+    });
 
-      const minutes = Math.floor(remainingSeconds / 60);
-      const seconds = remainingSeconds % 60;
-      timeDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    const getMinutes = (mode: string) => {
+      const property: string = POMODORO_MODE[mode].time as string;
+
+      console.log("getMinutes", Number(getState()[property]));
+
+      return property ? Number(getState()[property]) : -1;
+    };
+
+    // const progressDot = document.querySelector(".progress-dot");
+    //
+    // function updateProgress(percent: number, remainingSeconds: number) {
+    //   progressEl.style.setProperty("--progress", percent.toFixed(2));
+    //
+    //   const angle = (percent / 100) * 360;
+    //   progressDot.style.transform = `translate(-50%, -100%) rotate(${angle}deg) translateY(calc(var(--size) / 2 - var(--thickness) / 2))`;
+    //
+    //   const minutes = Math.floor(remainingSeconds / 60);
+    //   const seconds = remainingSeconds % 60;
+    //   timeDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    // }
+
+    const btnTimer: HTMLElement = document.querySelector(
+      ".pomodoro-timer-btn"
+    )!;
+    const timerEl: HTMLElement = document.querySelector(".pomodoro-timer")!;
+    const progressEl: HTMLElement =
+      timerEl.querySelector(".pomodoro-progress")!;
+    const timeDisplay: HTMLElement =
+      timerEl.querySelector(".pomodoro-display")!;
+
+    let interval: ReturnType<typeof setInterval>;
+
+    const pauseTimerFn = (clear = false) => {
+      btnTimer.setAttribute("aria-pressed", "false");
+      btnTimer.innerText = "Pause";
+
+      clear && clearInterval(interval);
+    };
+
+    const resumeTimerFn = (clear = false) => {
+      btnTimer.setAttribute("aria-pressed", "false");
+      btnTimer.innerText = "Resume";
+
+      clear && clearInterval(interval);
+    };
+
+    const resetTimerFn = (clear = false) => {
+      btnTimer.setAttribute("aria-pressed", "false");
+      btnTimer.innerText = "Start";
+
+      clear && clearInterval(interval);
+    };
+
+    const startTimerFn = (startInterval = false) => {
+      btnTimer.setAttribute("aria-pressed", "true");
+      btnTimer.innerText = "Pause";
+
+      startInterval && (interval = start());
+    };
+
+    const updateTimeDisplay = (
+      timeRemaining: number,
+      totalDuration: number
+    ) => {
+      const percent = ((totalDuration - timeRemaining) / totalDuration) * 100;
+      const minutes = Math.floor(timeRemaining / 60);
+      const seconds = timeRemaining % 60;
+
+      console.log("updateTimeDisplay", {
+        timeRemaining,
+        totalDuration,
+        percent,
+        minutes,
+        seconds,
+      });
+
+      timeDisplay.textContent =
+        timeRemaining <= 0
+          ? "00:00"
+          : `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+
+      if (progressEl) {
+        progressEl.style!.setProperty("--progress", percent.toFixed(2));
+      }
+    };
+
+    const listener = async (store: any) => {
+      let {
+        pomodoroMode: currentPomodoro,
+        isPressed,
+        timeRemaining,
+        totalDuration,
+        isRunning,
+      } = store.getState();
+
+      if (pomodoroMode !== currentPomodoro) {
+        totalDuration = getMinutes(pomodoroMode) * 60;
+        timeRemaining = totalDuration;
+        isPressed = false;
+        isRunning = false;
+        interval && clearInterval(interval);
+
+        pomodoroMode = currentPomodoro;
+
+        updateTimeDisplay(timeRemaining, totalDuration);
+
+        updateTimer({
+          totalDuration,
+          timeRemaining,
+          isRunning,
+        });
+      }
+    };
+
+    addListener(listener);
+
+    btnTimer.setAttribute("aria-pressed", "false");
+
+    if (isRunning === false) {
+      totalDuration = getMinutes(pomodoroMode) * 60;
+      timeRemaining = totalDuration;
+
+      resetTimerFn(false);
+    } else {
+      pauseTimerFn(true);
     }
 
-    const btnTimer = document.querySelector(".pomodoro-timer-btn");
-    const timerEl = document.querySelector(".pomodoro-timer");
-    const progressEl = timerEl.querySelector(".pomodoro-progress");
-    const timeDisplay = timerEl.querySelector(".pomodoro-display");
+    console.log("PREVIOUS", {
+      pomodoroMode,
+      timeRemaining,
+      totalDuration,
+      isRunning,
+    });
 
-    const totalDuration = 475; // parseInt(timerEl.dataset.duration, 10); // in seconds
-    let timeRemaining = totalDuration;
-    let interval = undefined;
+    updateTimeDisplay(timeRemaining, totalDuration);
 
     const start = () => {
       return setInterval(() => {
         timeRemaining--;
 
-        // Calculate percent complete
-        const percent = ((totalDuration - timeRemaining) / totalDuration) * 100;
-        progressEl.style.setProperty("--progress", percent.toFixed(2));
-
-        // Update time display
-        const minutes = Math.floor(timeRemaining / 60);
-        const seconds = timeRemaining % 60;
-        timeDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-
-        // updateProgress(percent, remainingSeconds);
+        updateTimeDisplay(timeRemaining, totalDuration);
 
         if (timeRemaining <= 0) {
           clearInterval(interval);
-          timeDisplay.textContent = "00:00";
         }
+
+        updateTimer({ totalDuration, timeRemaining, isRunning });
       }, 1000);
     };
 
@@ -90,17 +219,28 @@
 
       switch (isPressed) {
         case true:
-          btnTimer.setAttribute("aria-pressed", "false");
-          btnTimer.innerText = "Start";
+          if (timeRemaining > 0) {
+            resumeTimerFn(true);
+          } else {
+            timeRemaining = totalDuration;
+            resetTimerFn(true);
+          }
 
-          clearInterval(interval);
+          stopTimer();
           break;
 
         case false:
-          btnTimer.setAttribute("aria-pressed", "true");
-          btnTimer.innerText = "Stop";
+          if (timeRemaining <= 0) {
+            resetTimerFn(true);
+          } else {
+            startTimerFn(true);
+          }
 
-          interval = start();
+          startTimer({
+            totalDuration,
+            timeRemaining,
+          });
+
           break;
       }
     });
@@ -111,6 +251,7 @@
   .pomodoro-display,
   .pomodoro-btn-timer {
     font-family: var(--ff-pomodoro);
+    letter-spacing: var(--ls-pomodoro);
   }
 
   .pomodoro-timer {

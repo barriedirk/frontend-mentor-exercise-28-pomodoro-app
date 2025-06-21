@@ -378,14 +378,6 @@ import { base } from "../utils/base.js";
     animation: jelly 0.5s ease-in-out;
   }
 
-  .glass {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    padding: 0.5rem;
-    line-height: 1;
-  }
-
   @media screen and (min-width: 34em) {
     .settings-dialog {
       max-width: 540px;
@@ -429,6 +421,7 @@ import { base } from "../utils/base.js";
     timeLongBreak: any;
     font: any;
     color: any;
+    letterSpacing: any;
   };
 
   import {
@@ -453,10 +446,11 @@ import { base } from "../utils/base.js";
       getState();
 
     const listener = async (store: any) => {
-      const { font, color } = store.getState();
+      const { font, color, letterSpacing } = store.getState();
 
       document.body.style.setProperty("--clr-pomodoro", `var(${color})`);
       document.body.style.setProperty("--ff-pomodoro", `var(${font})`);
+      document.body.style.setProperty("--ls-pomodoro", `var(${letterSpacing})`);
     };
 
     addListener(listener);
@@ -508,6 +502,9 @@ import { base } from "../utils/base.js";
       for (const [key, value] of formData) {
         output[key] = value;
       }
+
+      output.letterSpacing =
+        output.font === "--ff-space" ? "--ls--10" : "--ls-0";
 
       applySettings(output as ApplySettingsActionParams);
 

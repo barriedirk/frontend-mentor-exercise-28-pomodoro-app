@@ -4,35 +4,40 @@ const initialState = {
   timePomodoro: 25,
   timeShortBreak: 5,
   timeLongBreak: 15,
-  font: "--ff-kumbh",
+  font: "--ff-space",
   color: "--clr-purple-400",
+  letterSpacing: "--ff-space",
 
-  pomodoroMode: "pomodoro",
+  pomodoroMode: "pomodoro", // "pomodoro", "short-break", "long-break"
 
-  sessionTime: 25 * 60, // 25 minutes in seconds
-  breakTime: 5 * 60, // 5 minutes in seconds
+  totalDuration: 0,
+  timeRemaining: 0,
+  breakTime: 0,
   isRunning: false,
-  isBreak: false,
-  intervalId: null,
 };
 
 export const ActionTypes = Object.freeze({
-  UODATE_MODE: "UODATE_MODE",
+  UPDATE_MODE: "UPDATE_MODE",
   APPLY: "APPLY_SETTINGS",
   START: "START",
+  PAUSE: "PAUSE",
   STOP: "STOP",
+  UPDATE_TIMER: "UPDATE_TIMER",
   RESET: "RESET",
-  TOGGLE_BREAK: "TOGGLE_BREAK",
-  SET_SESSION_TIME: "SET_SESSION_TIME",
-  SET_BREAK_TIME: "SET_BREAK_TIME",
   INIT: "@@INIT",
 });
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case ActionTypes.APPLY: {
-      const { timePomodoro, timeShortBreak, timeLongBreak, font, color } =
-        action.payload;
+      const {
+        timePomodoro,
+        timeShortBreak,
+        timeLongBreak,
+        font,
+        color,
+        letterSpacing,
+      } = action.payload;
 
       return {
         ...state,
@@ -41,9 +46,10 @@ export const reducer = (state = initialState, action) => {
         timeLongBreak,
         font,
         color,
+        letterSpacing,
       };
     }
-    case ActionTypes.UODATE_MODE: {
+    case ActionTypes.UPDATE_MODE: {
       const { pomodoroMode } = action.payload;
 
       return {
@@ -51,24 +57,36 @@ export const reducer = (state = initialState, action) => {
         pomodoroMode,
       };
     }
-    case ActionTypes.START:
-      return { ...state, isRunning: true };
-    case ActionTypes.STOP:
-      return { ...state, isRunning: false, intervalId: null };
+    case ActionTypes.START: {
+      const { totalDuration, timeRemaining } = action.payload;
+
+      return {
+        ...state,
+        totalDuration,
+        timeRemaining,
+        isRunning: true,
+      };
+    }
+    case ActionTypes.STOP: {
+      return { ...state, isRunning: false };
+    }
     case ActionTypes.RESET:
       return {
         ...state,
-        sessionTime: state.timePomodoro * 60,
         breakTime: 5 * 60,
         isRunning: false,
       };
-    case ActionTypes.TOGGLE_BREAK:
-      return { ...state, isBreak: !state.isBreak };
-    case ActionTypes.SET_SESSION_TIME:
-      return { ...state, sessionTime: action.payload };
-    case ActionTypes.SET_BREAK_TIME:
-      return { ...state, breakTime: action.payload };
 
+    case ActionTypes.UPDATE_TIMER: {
+      const { totalDuration, timeRemaining, isRunning } = action.payload;
+
+      return {
+        ...state,
+        totalDuration,
+        timeRemaining,
+        isRunning,
+      };
+    }
     case ActionTypes.INIT: {
       let newState = getStateFromLocalStorage() ?? structuredClone(state);
 
@@ -85,15 +103,6 @@ export const reducer = (state = initialState, action) => {
 export function createStore(reducer) {
   let state = undefined;
   let listeners = [];
-  // const listeners = new Set();
-
-  // const proxy = new Proxy(state, {
-  //   set(target, prop, value) {
-  //     target[prop] = value;
-  //     listeners.forEach((listener) => listener(state));
-  //     return true;
-  //   },
-  // });
 
   const getState = () => Object.freeze(state);
 
@@ -102,11 +111,6 @@ export function createStore(reducer) {
     listeners.forEach((listener) => listener());
   };
 
-  // const dispatch = (action) => {
-  //   state = reducer(state, action);
-  //   proxy[state];
-  // };
-
   const subscribe = (listener) => {
     listeners.push(listener);
 
@@ -114,12 +118,6 @@ export function createStore(reducer) {
       listeners = listeners.filter((l) => l !== listener);
     };
   };
-
-  // const subscribe = (listener) => {
-  //   listeners.add(listener);
-
-  //   return () => listeners.delete(listener);
-  // };
 
   dispatch({ type: "@@INIT" });
 
@@ -136,7 +134,7 @@ export const store = createStore(reducer);
 
 export const applySettingsAction = (
   store,
-  { timePomodoro, timeShortBreak, timeLongBreak, font, color }
+  { timePomodoro, timeShortBreak, timeLongBreak, font, color, letterSpacing }
 ) => {
   store.dispatch({
     type: ActionTypes.APPLY,
@@ -145,7 +143,47 @@ export const applySettingsAction = (
       timeShortBreak: timeShortBreak ?? initialState.timeShortBreak,
       timeLongBreak: timeLongBreak ?? initialState.timeLongBreak,
       font: font ?? initialState.font,
+      letterSpacing: letterSpacing ?? initialState.letterSpacing,
       color: color ?? initialState.color,
     },
+  });
+};
+
+export const updateModeAction = (store, { pomodoroMode }) => {
+  store.dispatch({
+    type: ActionTypes.UPDATE_MODE,
+    payload: {
+      pomodoroMode: pomodoroMode ?? "pomodoro",
+    },
+  });
+};
+
+export const updateTimerAction = (
+  store,
+  { totalDuration, timeRemaining, isPressed, isRunning }
+) => {
+  store.dispatch({
+    type: ActionTypes.UPDATE_TIMER,
+    payload: {
+      totalDuration: totalDuration ?? initialState.totalDuration,
+      timeRemaining: timeRemaining ?? initialState.timeRemaining,
+      isRunning: isRunning ?? initialState.isRunning,
+    },
+  });
+};
+
+export const startTimerAction = (store, { totalDuration, timeRemaining }) => {
+  store.dispatch({
+    type: ActionTypes.START,
+    payload: {
+      totalDuration: totalDuration ?? initialState.totalDuration,
+      timeRemaining: timeRemaining ?? initialState.timeRemaining,
+    },
+  });
+};
+
+export const stopTimerAction = (store) => {
+  store.dispatch({
+    type: ActionTypes.STOP,
   });
 };

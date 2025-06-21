@@ -29,7 +29,9 @@ import { base } from "../utils/base.js";
           id="label-pomodoro"
           for="f-option-pomodoro"
           class="flex justify-center items-center"
-          tabindex="0">pomodoro</label
+          tabindex="0"
+          role="radio"
+          aria-checked="false">pomodoro</label
         >
       </div>
 
@@ -45,7 +47,9 @@ import { base } from "../utils/base.js";
           id="label-short-break"
           for="f-option-short-break"
           class="flex justify-center items-center"
-          tabindex="0">short break</label
+          tabindex="0"
+          role="radio"
+          aria-checked="false">short break</label
         >
       </div>
 
@@ -61,61 +65,55 @@ import { base } from "../utils/base.js";
           id="label-long-break"
           for="f-option-long-break"
           class="flex justify-center items-center"
-          tabindex="0">long break</label
+          tabindex="0"
+          role="radio"
+          aria-checked="false">long break</label
         >
       </div>
     </fieldset>
   </form>
 </section>
 
-<script type="module" is:inline>
-  const savePomodoroMode = () => {
-    const form = document.getElementById("f-pomodoro-mode");
-    const formData = new FormData(form);
-    let output = "";
+<script>
+  import { updateMode, getState } from "../scripts/PomodoroStore.js";
+  import { setAccesibilityRadio, setInputValue } from "../lib/utils/utils.js";
 
-    for (const [key, value] of formData) {
-      output += `${key}: ${value}\n`;
-    }
+  (async () => {
+    const { pomodoroMode } = getState();
 
-    console.log(output);
-  };
+    setInputValue(
+      `#f-pomodoro-mode input[type="radio"][value="${pomodoroMode}"]`,
+      "checked",
+      true
+    );
 
-  document
-    .querySelectorAll('#f-pomodoro-mode input[type="radio"]')
-    .forEach((input) => {
-      input.addEventListener("change", (event) => {
-        if (event.target.checked) {
-          savePomodoroMode();
+    setAccesibilityRadio(
+      '#f-pomodoro-mode input[type="radio"]',
+      "#f-pomodoro-mode .pomodoro__option label"
+    );
+
+    document
+      .querySelectorAll('#f-pomodoro-mode input[type="radio"]')
+      .forEach((el) => {
+        if (el instanceof HTMLInputElement) {
+          el.addEventListener("change", (evt) => {
+            document
+              .querySelectorAll('#f-pomodoro-mode label[role="radio"]')
+              .forEach((label) => {
+                label.setAttribute("aria-checked", "false");
+              });
+
+            const label = document.querySelector(
+              `#f-pomodoro-mode label[for="${el.id}"]`
+            );
+
+            label?.setAttribute("aria-checked", "true");
+
+            updateMode({ pomodoroMode: el.value });
+          });
         }
       });
-
-      input.addEventListener("keydown", (keyboardEvent) => {
-        if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
-          event.preventDefault();
-          input.checked = true;
-        }
-      });
-    });
-
-  document
-    .querySelectorAll("#f-pomodoro-mode .pomodoro__option label")
-    .forEach((label) => {
-      label.addEventListener("keydown", (keyboardEvent) => {
-        if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
-          event.preventDefault();
-          const inputId = label.getAttribute("for");
-          if (!inputId) return;
-
-          const input = document.getElementById(inputId);
-          if (input) {
-            input.checked = true;
-            input.focus();
-            console.log(`Selected via label: ${input.value}`);
-          }
-        }
-      });
-    });
+  })();
 </script>
 
 <style>
@@ -146,9 +144,18 @@ import { base } from "../utils/base.js";
     height: 100%;
     background-color: var(--clr-blue-900);
     color: var(--clr-blue-100);
+    transition: all 0.3s ease-in;
   }
 
-  .pomodoro__options input[type="radio"]:checked + label {
+  .pomodoro__option label:hover,
+  .pomodoro__option label:active {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .pomodoro__options input[type="radio"]:checked + label,
+  .pomodoro__options input[type="radio"]:checked + label:hover,
+  .pomodoro__options input[type="radio"]:checked + label:active {
+    opacity: 1;
     background-color: var(--clr-pomodoro);
     color: var(--clr-blue-850);
   }
