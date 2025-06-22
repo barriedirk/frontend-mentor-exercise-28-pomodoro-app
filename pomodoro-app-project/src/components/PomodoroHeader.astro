@@ -75,11 +75,31 @@ import { base } from "../utils/base.js";
 </section>
 
 <script>
-  import { updateMode, getState } from "../scripts/PomodoroStore.js";
+  import {
+    updateMode,
+    getState,
+    addListener,
+  } from "../scripts/PomodoroStore.js";
   import { setAccesibilityRadio, setInputValue } from "../lib/utils/utils.js";
 
   (async () => {
-    const { pomodoroMode } = getState();
+    let { pomodoroMode } = getState();
+
+    const listener = async (store: any) => {
+      let { pomodoroMode: currentPomodoro } = store.getState();
+
+      if (currentPomodoro !== pomodoroMode) {
+        pomodoroMode = currentPomodoro;
+
+        setInputValue(
+          `#f-pomodoro-mode input[type="radio"][value="${pomodoroMode}"]`,
+          "checked",
+          true
+        );
+      }
+    };
+
+    addListener(listener);
 
     setInputValue(
       `#f-pomodoro-mode input[type="radio"][value="${pomodoroMode}"]`,

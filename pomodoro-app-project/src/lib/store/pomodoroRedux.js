@@ -1,17 +1,24 @@
 import { getStateFromLocalStorage } from "../utils/utils.js";
+import { POMODORO_VALUES } from "../utils/constants.js";
 
 const initialState = {
-  timePomodoro: 25,
-  timeShortBreak: 5,
-  timeLongBreak: 15,
+  // @todo, test
+  timePomodoro: 3, // @todo, test
+  timeShortBreak: 1, // @todo, test
+  timeLongBreak: 2, // @todo, test
+  // timePomodoro: 25,
+  // timeShortBreak: 5,
+  // timeLongBreak: 15,
   font: "--ff-space",
   color: "--clr-purple-400",
   letterSpacing: "--ff-space",
 
-  pomodoroMode: "pomodoro", // "pomodoro", "short-break", "long-break"
+  pomodoroMode: POMODORO_VALUES.POMODORO,
+  countPomodoro: 0, // maximum 4
 
-  totalDuration: 0,
-  timeRemaining: 0,
+  totalDuration: 25 * 60,
+  timeRemaining: 25 * 60,
+
   breakTime: 0,
   isRunning: false,
 };
@@ -19,6 +26,7 @@ const initialState = {
 export const ActionTypes = Object.freeze({
   UPDATE_MODE: "UPDATE_MODE",
   APPLY: "APPLY_SETTINGS",
+  INCREASE_COUNT_POMODORO: "INCREASE_COUNT_POMODORO",
   START: "START",
   PAUSE: "PAUSE",
   STOP: "STOP",
@@ -49,12 +57,19 @@ export const reducer = (state = initialState, action) => {
         letterSpacing,
       };
     }
+
     case ActionTypes.UPDATE_MODE: {
       const { pomodoroMode } = action.payload;
 
       return {
         ...state,
         pomodoroMode,
+      };
+    }
+    case ActionTypes.INCREASE_COUNT_POMODORO: {
+      return {
+        ...state,
+        countPomodoro: state.countPomodoro + 1,
       };
     }
     case ActionTypes.START: {
@@ -70,12 +85,17 @@ export const reducer = (state = initialState, action) => {
     case ActionTypes.STOP: {
       return { ...state, isRunning: false };
     }
-    case ActionTypes.RESET:
+    case ActionTypes.RESET: {
       return {
         ...state,
-        breakTime: 5 * 60,
+        pomodoroMode: POMODORO_VALUES.POMODORO,
+        countPomodoro: 0,
+        totalDuration: 25 * 60,
+        timeRemaining: 25 * 60,
+        breakTime: 0,
         isRunning: false,
       };
+    }
 
     case ActionTypes.UPDATE_TIMER: {
       const { totalDuration, timeRemaining, isRunning } = action.payload;
@@ -185,5 +205,17 @@ export const startTimerAction = (store, { totalDuration, timeRemaining }) => {
 export const stopTimerAction = (store) => {
   store.dispatch({
     type: ActionTypes.STOP,
+  });
+};
+
+export const resetTimerAction = (store) => {
+  store.dispatch({
+    type: ActionTypes.RESET,
+  });
+};
+
+export const increaseCountPomodoroAction = (store) => {
+  store.dispatch({
+    type: ActionTypes.INCREASE_COUNT_POMODORO,
   });
 };

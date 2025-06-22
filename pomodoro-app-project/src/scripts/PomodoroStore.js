@@ -5,6 +5,8 @@ import {
   updateTimerAction,
   startTimerAction,
   stopTimerAction,
+  resetTimerAction,
+  increaseCountPomodoroAction,
 } from "../lib/store/pomodoroRedux.js";
 import { setStateToLocalStorage } from "../lib/utils/utils.js";
 
@@ -70,4 +72,12 @@ export const startTimer = ({ totalDuration, timeRemaining }) => {
 
 export const stopTimer = () => {
   stopTimerAction(store);
+};
+
+export const resetTimer = () => {
+  resetTimerAction(store);
+};
+
+export const increaseCountPomodoro = () => {
+  increaseCountPomodoroAction(store);
 };

@@ -9,3 +9,12 @@ export const POMODORO_MODE: Record<string, { time: string }> = {
   "short-break": { time: "timeShortBreak" },
   "long-break": { time: "timeLongBreak" },
 };
+
+export const POMODORO_MAX_INTERVAL = 4;
+
+export const SOUNDS: Record<string, string> = {
+  START: "startSound",
+  PAUSE: "pauseSound",
+  BREAK: "breakSound",
+  END: "endSound",
+};

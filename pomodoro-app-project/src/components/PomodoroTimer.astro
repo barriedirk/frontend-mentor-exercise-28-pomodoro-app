@@ -1,8 +1,8 @@
 ---
-
+import { base } from "../utils/base.js";
 ---
 
-<section class="pomodoro-timer w-full">
+<section class="pomodoro-timer w-full" data-base={base}>
   <div
     class="pomodoro-progress-outer flex flex-col justify-center items-center"
   >
@@ -26,324 +26,433 @@
               class="pomodoro-display text-preset-1--mobile--font-3 blue-100"
               >00:00</span
             >
-            <div class="flex flex-row gap-2">
+            <div class="flex flex-row gap-3">
               <button
                 type="button"
                 id="btn-timer"
                 class="pomodoro-timer-btn text-preset-2--mobile--font-3 uppercase"
                 aria-pressed="false">Start</button
               >
+
+              <button
+                type="button"
+                id="btn-reset"
+                class="pomodoro-resetr-btn"
+                aria-label="Reset Pomodoro"
+                title="Reset Pomodoro"
+              >
+                <img
+                  height="18"
+                  width="18"
+                  src={`${base}assets/reset.svg`}
+                  alt=""
+                  aria-hidden="true"
+                />
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</section>
 
-<script>
-  import {
-    updateMode,
-    getState,
-    updateTimer,
-    startTimer,
-    stopTimer,
-    addListener,
-  } from "../scripts/PomodoroStore.js";
-  import { POMODORO_VALUES, POMODORO_MODE } from "../lib/utils/constants.js";
+  <script>
+    import {
+      updateMode,
+      getState,
+      updateTimer,
+      startTimer,
+      stopTimer,
+      resetTimer,
+      increaseCountPomodoro,
+      addListener,
+    } from "../scripts/PomodoroStore.js";
+    import {
+      POMODORO_VALUES,
+      POMODORO_MODE,
+      POMODORO_MAX_INTERVAL,
+      SOUNDS,
+    } from "../lib/utils/constants.js";
+    import { initSounds, playSound } from "../lib/utils/utils.js";
 
-  (async () => {
-    let { pomodoroMode, timeRemaining, totalDuration, isRunning } = getState();
+    const base: string =
+      document.querySelector(".pomodoro-timer")!.getAttribute("data-base") ??
+      "/";
 
-    console.log("INITIAL", {
-      pomodoroMode,
-      timeRemaining,
-      totalDuration,
-      isRunning,
-    });
+    let sounds: any;
 
-    const getMinutes = (mode: string) => {
-      const property: string = POMODORO_MODE[mode].time as string;
-
-      console.log("getMinutes", Number(getState()[property]));
-
-      return property ? Number(getState()[property]) : -1;
-    };
-
-    // const progressDot = document.querySelector(".progress-dot");
-    //
-    // function updateProgress(percent: number, remainingSeconds: number) {
-    //   progressEl.style.setProperty("--progress", percent.toFixed(2));
-    //
-    //   const angle = (percent / 100) * 360;
-    //   progressDot.style.transform = `translate(-50%, -100%) rotate(${angle}deg) translateY(calc(var(--size) / 2 - var(--thickness) / 2))`;
-    //
-    //   const minutes = Math.floor(remainingSeconds / 60);
-    //   const seconds = remainingSeconds % 60;
-    //   timeDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-    // }
-
-    const btnTimer: HTMLElement = document.querySelector(
-      ".pomodoro-timer-btn"
-    )!;
-    const timerEl: HTMLElement = document.querySelector(".pomodoro-timer")!;
-    const progressEl: HTMLElement =
-      timerEl.querySelector(".pomodoro-progress")!;
-    const timeDisplay: HTMLElement =
-      timerEl.querySelector(".pomodoro-display")!;
-
-    let interval: ReturnType<typeof setInterval>;
-
-    const pauseTimerFn = (clear = false) => {
-      btnTimer.setAttribute("aria-pressed", "false");
-      btnTimer.innerText = "Pause";
-
-      clear && clearInterval(interval);
-    };
-
-    const resumeTimerFn = (clear = false) => {
-      btnTimer.setAttribute("aria-pressed", "false");
-      btnTimer.innerText = "Resume";
-
-      clear && clearInterval(interval);
-    };
-
-    const resetTimerFn = (clear = false) => {
-      btnTimer.setAttribute("aria-pressed", "false");
-      btnTimer.innerText = "Start";
-
-      clear && clearInterval(interval);
-    };
-
-    const startTimerFn = (startInterval = false) => {
-      btnTimer.setAttribute("aria-pressed", "true");
-      btnTimer.innerText = "Pause";
-
-      startInterval && (interval = start());
-    };
-
-    const updateTimeDisplay = (
-      timeRemaining: number,
-      totalDuration: number
-    ) => {
-      const percent = ((totalDuration - timeRemaining) / totalDuration) * 100;
-      const minutes = Math.floor(timeRemaining / 60);
-      const seconds = timeRemaining % 60;
-
-      console.log("updateTimeDisplay", {
-        timeRemaining,
-        totalDuration,
-        percent,
-        minutes,
-        seconds,
+    initSounds(base)
+      .then((loaded) => {
+        sounds = loaded;
+        console.log("Sounds loaded and ready");
+      })
+      .catch((err) => {
+        console.error("Failed to load sounds:", err);
       });
 
-      timeDisplay.textContent =
-        timeRemaining <= 0
-          ? "00:00"
-          : `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-
-      if (progressEl) {
-        progressEl.style!.setProperty("--progress", percent.toFixed(2));
-      }
-    };
-
-    const listener = async (store: any) => {
+    (async () => {
       let {
-        pomodoroMode: currentPomodoro,
-        isPressed,
+        pomodoroMode,
         timeRemaining,
         totalDuration,
         isRunning,
-      } = store.getState();
+        countPomodoro,
+      } = getState();
 
-      if (pomodoroMode !== currentPomodoro) {
-        totalDuration = getMinutes(pomodoroMode) * 60;
+      console.log("INITIAL", {
+        countPomodoro,
+        pomodoroMode,
+        timeRemaining,
+        totalDuration,
+        isRunning,
+      });
+
+      const getMinutes = (mode: string) => {
+        const property: string = POMODORO_MODE[mode].time as string;
+
+        console.log("getMinutes", Number(getState()[property]));
+
+        return property ? Number(getState()[property]) : -1;
+      };
+
+      // const progressDot = document.querySelector(".progress-dot");
+      //
+      // function updateProgress(percent: number, remainingSeconds: number) {
+      //   progressEl.style.setProperty("--progress", percent.toFixed(2));
+      //
+      //   const angle = (percent / 100) * 360;
+      //   progressDot.style.transform = `translate(-50%, -100%) rotate(${angle}deg) translateY(calc(var(--size) / 2 - var(--thickness) / 2))`;
+      //
+      //   const minutes = Math.floor(remainingSeconds / 60);
+      //   const seconds = remainingSeconds % 60;
+      //   timeDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+      // }
+
+      const btnResetTimer: HTMLElement = document.querySelector(
+        ".pomodoro-resetr-btn"
+      )!;
+
+      const btnTimer: HTMLElement = document.querySelector(
+        ".pomodoro-timer-btn"
+      )!;
+      const timerEl: HTMLElement = document.querySelector(".pomodoro-timer")!;
+      const progressEl: HTMLElement =
+        timerEl.querySelector(".pomodoro-progress")!;
+      const timeDisplay: HTMLElement =
+        timerEl.querySelector(".pomodoro-display")!;
+
+      let interval: ReturnType<typeof setInterval>;
+
+      const pauseTimerFn = (clear = false) => {
+        btnTimer.setAttribute("aria-pressed", "false");
+        btnTimer.innerText = "Pause";
+
+        clear && clearInterval(interval);
+      };
+
+      const resumeTimerFn = (clear = false) => {
+        btnTimer.setAttribute("aria-pressed", "false");
+        btnTimer.innerText = "Resume";
+
+        clear && clearInterval(interval);
+      };
+
+      const resetTimerFn = () => {
+        btnTimer.setAttribute("aria-pressed", "false");
+        btnTimer.innerText = "Start";
+
+        clearInterval(interval);
+
+        totalDuration = getMinutes(POMODORO_VALUES.POMODORO) * 60;
         timeRemaining = totalDuration;
-        isPressed = false;
         isRunning = false;
-        interval && clearInterval(interval);
-
-        pomodoroMode = currentPomodoro;
 
         updateTimeDisplay(timeRemaining, totalDuration);
 
-        updateTimer({
-          totalDuration,
-          timeRemaining,
-          isRunning,
-        });
-      }
-    };
+        resetTimer();
+      };
 
-    addListener(listener);
+      const restartTimerFn = (clear = false) => {
+        btnTimer.setAttribute("aria-pressed", "false");
+        btnTimer.innerText = "Start";
 
-    btnTimer.setAttribute("aria-pressed", "false");
+        clear && clearInterval(interval);
+      };
 
-    if (isRunning === false) {
-      totalDuration = getMinutes(pomodoroMode) * 60;
-      timeRemaining = totalDuration;
+      const startTimerFn = (startInterval = false) => {
+        btnTimer.setAttribute("aria-pressed", "true");
+        btnTimer.innerText = "Pause";
 
-      resetTimerFn(false);
-    } else {
-      pauseTimerFn(true);
-    }
+        !!interval && clearInterval(interval);
 
-    console.log("PREVIOUS", {
-      pomodoroMode,
-      timeRemaining,
-      totalDuration,
-      isRunning,
-    });
+        startInterval && (interval = start());
+      };
 
-    updateTimeDisplay(timeRemaining, totalDuration);
+      const updateTimeDisplay = (
+        timeRemaining: number,
+        totalDuration: number
+      ) => {
+        const percent = ((totalDuration - timeRemaining) / totalDuration) * 100;
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
 
-    const start = () => {
-      return setInterval(() => {
-        timeRemaining--;
+        timeDisplay.textContent =
+          timeRemaining <= 0
+            ? "00:00"
+            : `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 
-        updateTimeDisplay(timeRemaining, totalDuration);
-
-        if (timeRemaining <= 0) {
-          clearInterval(interval);
+        if (progressEl) {
+          progressEl.style!.setProperty("--progress", percent.toFixed(2));
         }
+      };
 
-        updateTimer({ totalDuration, timeRemaining, isRunning });
-      }, 1000);
-    };
+      const listener = async (store: any) => {
+        let {
+          pomodoroMode: currentPomodoro,
+          timeRemaining,
+          totalDuration,
+          isRunning,
+        } = store.getState();
 
-    btnTimer.addEventListener("click", (evt) => {
-      evt.preventDefault();
+        if (pomodoroMode !== currentPomodoro) {
+          totalDuration = getMinutes(pomodoroMode) * 60;
+          timeRemaining = totalDuration;
+          isRunning = false;
+          interval && clearInterval(interval);
 
-      const isPressed = btnTimer.getAttribute("aria-pressed") === "true";
+          pomodoroMode = currentPomodoro;
 
-      switch (isPressed) {
-        case true:
-          if (timeRemaining > 0) {
-            resumeTimerFn(true);
-          } else {
-            timeRemaining = totalDuration;
-            resetTimerFn(true);
-          }
+          updateTimeDisplay(timeRemaining, totalDuration);
 
-          stopTimer();
-          break;
-
-        case false:
-          if (timeRemaining <= 0) {
-            resetTimerFn(true);
-          } else {
-            startTimerFn(true);
-          }
-
-          startTimer({
+          updateTimer({
             totalDuration,
             timeRemaining,
+            isRunning,
           });
+        }
+      };
 
-          break;
+      addListener(listener);
+
+      btnTimer.setAttribute("aria-pressed", "false");
+
+      if (isRunning === false) {
+        totalDuration = getMinutes(pomodoroMode) * 60;
+        timeRemaining = totalDuration;
+
+        restartTimerFn(true);
+      } else {
+        pauseTimerFn(true);
       }
-    });
-  })();
-</script>
 
-<style>
-  .pomodoro-display,
-  .pomodoro-btn-timer {
-    font-family: var(--ff-pomodoro);
-    letter-spacing: var(--ls-pomodoro);
-  }
+      console.log("PREVIOUS", {
+        countPomodoro,
+        pomodoroMode,
+        timeRemaining,
+        totalDuration,
+        isRunning,
+      });
 
-  .pomodoro-timer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: sans-serif;
-  }
+      updateTimeDisplay(timeRemaining, totalDuration);
 
-  .progress-dot {
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    background: var(--clr-pomodoro);
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -100%) rotate(0deg)
-      translateY(calc(var(--size) / 2 - var(--thickness) / 2));
-    transform-origin: center;
-    z-index: 2;
-  }
+      const updatePomodoroValuesDependingMode = (pomodoroMode) => {
+        totalDuration = getMinutes(pomodoroMode) * 60;
+        timeRemaining = totalDuration;
+        countPomodoro++;
 
-  .pomodoro-progress-middle {
-    border-radius: 50%;
-    padding: 20px;
-    background: linear-gradient(-45deg, rgb(42, 46, 81), rgb(23, 25, 48));
-    filter: drop-shadow(3.125rem 3.125rem 6.25rem #151832);
-  }
+        startTimerFn(true);
+        updateMode({ pomodoroMode });
+        increaseCountPomodoro();
+        startTimer({
+          totalDuration,
+          timeRemaining,
+        });
+      };
 
-  .pomodoro-progress-outer::before {
-    position: absolute;
-    content: "";
-    width: 100%;
-    height: 100%;
-    filter: drop-shadow(3.125rem 3.125rem 6.25rem #151832);
-  }
+      const nextStep = () => {
+        switch (pomodoroMode) {
+          case POMODORO_VALUES.POMODORO:
+            if (countPomodoro <= POMODORO_MAX_INTERVAL) {
+              pomodoroMode = POMODORO_VALUES.SHORT_BREAK;
+            } else {
+              pomodoroMode = POMODORO_VALUES.LONG_BREAK;
+            }
 
-  .pomodoro-progress-outer {
-    position: relative;
-    background: var(--gradient2);
-    border-radius: 50%;
-    padding: 10px;
-    filter: drop-shadow(-3.125rem -3.125rem 6.25rem #272c5a);
-  }
+            updatePomodoroValuesDependingMode(pomodoroMode);
+            playSound(sounds, SOUNDS.BREAK);
+            break;
 
-  .pomodoro-progress-inner {
-    background: var(--clr-blue-900);
-    border-radius: 50%;
-    padding: 10px;
-  }
+          case POMODORO_VALUES.SHORT_BREAK:
+            pomodoroMode = POMODORO_VALUES.POMODORO;
 
-  .pomodoro-progress {
-    --size: 300px;
-    --thickness: 10px;
-    --progress: 0;
+            playSound(sounds, SOUNDS.START);
+            updatePomodoroValuesDependingMode(pomodoroMode);
+            break;
 
-    width: var(--size);
-    height: var(--size);
-    border-radius: 50%;
+          case POMODORO_VALUES.LONG_BREAK:
+            resetTimerFn();
+            playSound(sounds, SOUNDS.END);
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    background: conic-gradient(
-        var(--clr-pomodoro) calc(var(--progress) * 1%),
-        transparent 0%
-      ),
-      var(--clr-blue-50-1);
-    transition: background 0.3s ease-out;
-  }
+            break;
+        }
+      };
 
-  .pomodoro-progress::before {
-    content: "";
-    position: absolute;
-    width: calc(var(--size) - var(--thickness) * 2);
-    height: calc(var(--size) - var(--thickness) * 2);
-    background: var(--clr-blue-900);
-    border-radius: 50%;
-    z-index: 1;
-  }
+      const start = () => {
+        return setInterval(() => {
+          timeRemaining--;
 
-  .pomodoro-display--container {
-    position: relative;
-    z-index: 2;
-    color: white;
-  }
+          updateTimeDisplay(timeRemaining, totalDuration);
 
-  @media screen and (min-width: 48em) {
-    .pomodoro-progress {
-      --size: 410px;
+          if (timeRemaining <= 0) {
+            clearInterval(interval);
+            nextStep();
+          }
+
+          updateTimer({ totalDuration, timeRemaining, isRunning });
+        }, 1000);
+      };
+
+      btnResetTimer.addEventListener("click", (evt) => {
+        evt.preventDefault();
+
+        resetTimerFn();
+      });
+
+      btnTimer.addEventListener("click", (evt) => {
+        evt.preventDefault();
+
+        const isPressed = btnTimer.getAttribute("aria-pressed") === "true";
+
+        switch (isPressed) {
+          case true:
+            if (timeRemaining > 0) {
+              resumeTimerFn(true);
+            } else {
+              timeRemaining = totalDuration;
+              restartTimerFn(true);
+            }
+
+            playSound(sounds, SOUNDS.PAUSE);
+            stopTimer();
+            break;
+
+          case false:
+            if (timeRemaining <= 0) {
+              restartTimerFn(true);
+            } else {
+              startTimerFn(true);
+            }
+
+            playSound(sounds, SOUNDS.START);
+            startTimer({
+              totalDuration,
+              timeRemaining,
+            });
+
+            break;
+        }
+      });
+    })();
+  </script>
+
+  <style>
+    .pomodoro-display,
+    .pomodoro-btn-timer {
+      font-family: var(--ff-pomodoro);
+      letter-spacing: var(--ls-pomodoro);
     }
-  }
-</style>
+
+    .pomodoro-timer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: sans-serif;
+    }
+
+    .progress-dot {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: var(--clr-pomodoro);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -100%) rotate(0deg)
+        translateY(calc(var(--size) / 2 - var(--thickness) / 2));
+      transform-origin: center;
+      z-index: 2;
+    }
+
+    .pomodoro-progress-middle {
+      border-radius: 50%;
+      padding: 20px;
+      background: linear-gradient(-45deg, rgb(42, 46, 81), rgb(23, 25, 48));
+      filter: drop-shadow(3.125rem 3.125rem 6.25rem #151832);
+    }
+
+    .pomodoro-progress-outer::before {
+      position: absolute;
+      content: "";
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(3.125rem 3.125rem 6.25rem #151832);
+    }
+
+    .pomodoro-progress-outer {
+      position: relative;
+      background: var(--gradient2);
+      border-radius: 50%;
+      padding: 10px;
+      filter: drop-shadow(-3.125rem -3.125rem 6.25rem #272c5a);
+    }
+
+    .pomodoro-progress-inner {
+      background: var(--clr-blue-900);
+      border-radius: 50%;
+      padding: 10px;
+    }
+
+    .pomodoro-progress {
+      --size: 300px;
+      --thickness: 10px;
+      --progress: 0;
+
+      width: var(--size);
+      height: var(--size);
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: conic-gradient(
+          var(--clr-pomodoro) calc(var(--progress) * 1%),
+          transparent 0%
+        ),
+        var(--clr-blue-50-1);
+      transition: background 0.3s ease-out;
+    }
+
+    .pomodoro-progress::before {
+      content: "";
+      position: absolute;
+      width: calc(var(--size) - var(--thickness) * 2);
+      height: calc(var(--size) - var(--thickness) * 2);
+      background: var(--clr-blue-900);
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    .pomodoro-display--container {
+      position: relative;
+      z-index: 2;
+      color: white;
+    }
+
+    @media screen and (min-width: 48em) {
+      .pomodoro-progress {
+        --size: 410px;
+      }
+    }
+  </style>
+</section>
