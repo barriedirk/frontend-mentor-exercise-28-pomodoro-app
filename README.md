@@ -4,6 +4,5 @@
 
 ## Welcome! 👋
 
-[Github](https://github.com/barriedirk/frontend-mentor-exercise-28-pomodoro-app) / 
-[URL Site](https://barriedirk.github.io/frontend-mentor-exercise-28-pomodoro-app) /
-[DeepWiki](https://deepwiki.com/barriedirk/frontend-mentor-exercise-28-pomodoro-appe)
+* [Github](https://github.com/barriedirk/frontend-mentor-exercise-28-pomodoro-app)  
+* [URL Site](https://barriedirk.github.io/frontend-mentor-exercise-28-pomodoro-app)
