@@ -12,12 +12,7 @@ import { base } from "../utils/base.js";
 
 import "../styles/global.css";
 
-let {
-  title,
-  className = "",
-  showFooter = true,
-  isStartSlideShow = true,
-} = Astro.props;
+let { title, className = "" } = Astro.props;
 
 title = `Frontend Mentor | Pomodoro App`;
 className += " flex flex-col";
@@ -89,7 +84,6 @@ className += " flex flex-col";
 </html>
 
 <script>
-  // @todo, missing fade-in css
   const initializePage = () => {
     window.addEventListener("load", () => {
       document.body.classList.add("fade-in");

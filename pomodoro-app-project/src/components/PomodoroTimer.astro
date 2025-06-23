@@ -37,17 +37,13 @@ import { base } from "../utils/base.js";
               <button
                 type="button"
                 id="btn-reset"
-                class="pomodoro-resetr-btn"
+                class="pomodoro-reset-btn"
                 aria-label="Reset Pomodoro"
                 title="Reset Pomodoro"
               >
-                <img
-                  height="18"
-                  width="18"
-                  src={`${base}assets/reset.svg`}
-                  alt=""
-                  aria-hidden="true"
-                />
+                <svg class="w-[18px] h-[18px]" aria-label="Reset Pomodoro">
+                  <use href={`${base}assets/reset.svg#reset`}></use>
+                </svg>
               </button>
             </div>
           </div>
@@ -75,9 +71,9 @@ import { base } from "../utils/base.js";
     } from "../lib/utils/constants.js";
     import { initSounds, playSound } from "../lib/utils/utils.js";
 
-    const base: string =
-      document.querySelector(".pomodoro-timer")!.getAttribute("data-base") ??
-      "/";
+    const sectionPomodoroTimer = document.querySelector(".pomodoro-timer")!;
+
+    const base: string = sectionPomodoroTimer.getAttribute("data-base") ?? "/";
 
     let sounds: any;
 
@@ -91,45 +87,42 @@ import { base } from "../utils/base.js";
       });
 
     (async () => {
-      let {
-        pomodoroMode,
-        timeRemaining,
-        totalDuration,
-        isRunning,
-        countPomodoro,
-      } = getState();
+      let { pomodoroMode, timeRemaining, totalDuration, isRunning } =
+        getState();
 
-      console.log("INITIAL", {
-        countPomodoro,
-        pomodoroMode,
-        timeRemaining,
-        totalDuration,
-        isRunning,
-      });
+      const addClassPomodoroPause = (mode: string) => {
+        if (mode === POMODORO_VALUES.POMODORO)
+          sectionPomodoroTimer.classList.remove("pomodoro-pause");
+        else sectionPomodoroTimer.classList.add("pomodoro-pause");
+      };
+
+      addClassPomodoroPause(pomodoroMode);
 
       const getMinutes = (mode: string) => {
         const property: string = POMODORO_MODE[mode].time as string;
 
-        console.log("getMinutes", Number(getState()[property]));
-
         return property ? Number(getState()[property]) : -1;
       };
 
-      // const progressDot = document.querySelector(".progress-dot");
-      //
-      // function updateProgress(percent: number, remainingSeconds: number) {
-      //   progressEl.style.setProperty("--progress", percent.toFixed(2));
-      //
-      //   const angle = (percent / 100) * 360;
-      //   progressDot.style.transform = `translate(-50%, -100%) rotate(${angle}deg) translateY(calc(var(--size) / 2 - var(--thickness) / 2))`;
-      //
-      //   const minutes = Math.floor(remainingSeconds / 60);
-      //   const seconds = remainingSeconds % 60;
-      //   timeDisplay.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-      // }
+      const progressDot: HTMLElement = document.querySelector(".progress-dot")!;
+
+      function updateProgressDot(percent: number) {
+        const angle = (percent / 100) * 360 - 180;
+
+        const size =
+          parseFloat(getComputedStyle(progressEl).getPropertyValue("--size")) ||
+          300;
+        const dotSize = progressDot.offsetWidth || 12;
+        const offset = size / 2 - dotSize / 2;
+
+        progressDot.style.transform = `
+          translate(-50%, -50%)
+          rotate(${angle}deg)
+          translateY(${offset}px)`;
+      }
 
       const btnResetTimer: HTMLElement = document.querySelector(
-        ".pomodoro-resetr-btn"
+        ".pomodoro-reset-btn"
       )!;
 
       const btnTimer: HTMLElement = document.querySelector(
@@ -201,6 +194,8 @@ import { base } from "../utils/base.js";
             ? "00:00"
             : `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 
+        updateProgressDot(percent);
+
         if (progressEl) {
           progressEl.style!.setProperty("--progress", percent.toFixed(2));
         }
@@ -209,12 +204,13 @@ import { base } from "../utils/base.js";
       const listener = async (store: any) => {
         let {
           pomodoroMode: currentPomodoro,
-          timeRemaining,
-          totalDuration,
-          isRunning,
+          totalDuration: currentTotalDuration,
         } = store.getState();
 
-        if (pomodoroMode !== currentPomodoro) {
+        if (
+          pomodoroMode !== currentPomodoro ||
+          totalDuration !== currentTotalDuration
+        ) {
           totalDuration = getMinutes(pomodoroMode) * 60;
           timeRemaining = totalDuration;
           isRunning = false;
@@ -222,6 +218,7 @@ import { base } from "../utils/base.js";
 
           pomodoroMode = currentPomodoro;
 
+          addClassPomodoroPause(pomodoroMode);
           updateTimeDisplay(timeRemaining, totalDuration);
 
           updateTimer({
@@ -245,20 +242,11 @@ import { base } from "../utils/base.js";
         pauseTimerFn(true);
       }
 
-      console.log("PREVIOUS", {
-        countPomodoro,
-        pomodoroMode,
-        timeRemaining,
-        totalDuration,
-        isRunning,
-      });
-
       updateTimeDisplay(timeRemaining, totalDuration);
 
-      const updatePomodoroValuesDependingMode = (pomodoroMode) => {
+      const updatePomodoroValuesDependingMode = (pomodoroMode: string) => {
         totalDuration = getMinutes(pomodoroMode) * 60;
         timeRemaining = totalDuration;
-        countPomodoro++;
 
         startTimerFn(true);
         updateMode({ pomodoroMode });
@@ -270,15 +258,16 @@ import { base } from "../utils/base.js";
       };
 
       const nextStep = () => {
+        let { countPomodoro } = getState();
+
         switch (pomodoroMode) {
           case POMODORO_VALUES.POMODORO:
-            if (countPomodoro <= POMODORO_MAX_INTERVAL) {
+            if (countPomodoro < POMODORO_MAX_INTERVAL) {
               pomodoroMode = POMODORO_VALUES.SHORT_BREAK;
             } else {
               pomodoroMode = POMODORO_VALUES.LONG_BREAK;
             }
 
-            updatePomodoroValuesDependingMode(pomodoroMode);
             playSound(sounds, SOUNDS.BREAK);
             break;
 
@@ -286,15 +275,17 @@ import { base } from "../utils/base.js";
             pomodoroMode = POMODORO_VALUES.POMODORO;
 
             playSound(sounds, SOUNDS.START);
-            updatePomodoroValuesDependingMode(pomodoroMode);
             break;
 
           case POMODORO_VALUES.LONG_BREAK:
             resetTimerFn();
             playSound(sounds, SOUNDS.END);
 
-            break;
+            return;
         }
+
+        updatePomodoroValuesDependingMode(pomodoroMode);
+        addClassPomodoroPause(pomodoroMode);
       };
 
       const start = () => {
@@ -363,6 +354,10 @@ import { base } from "../utils/base.js";
     }
 
     .pomodoro-timer {
+      --size: 300px;
+      --thickness: 10px;
+      --progress: 0;
+
       display: flex;
       justify-content: center;
       align-items: center;
@@ -370,17 +365,24 @@ import { base } from "../utils/base.js";
     }
 
     .progress-dot {
+      --dot-size: 10px;
+
+      width: var(--dot-size);
+      height: var(--dot-size);
       position: absolute;
-      width: 12px;
-      height: 12px;
       background: var(--clr-pomodoro);
       border-radius: 50%;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -100%) rotate(0deg)
-        translateY(calc(var(--size) / 2 - var(--thickness) / 2));
+      transform: translate(-50%, -50%) rotate(0deg)
+        translateY(calc(var(--size) / 2 - var(--dot-size) / 2));
       transform-origin: center;
       z-index: 2;
+      opacity: 0.9;
+    }
+
+    .pomodoro-pause .progress-dot {
+      background: var(--clr-grey-400);
     }
 
     .pomodoro-progress-middle {
@@ -413,10 +415,6 @@ import { base } from "../utils/base.js";
     }
 
     .pomodoro-progress {
-      --size: 300px;
-      --thickness: 10px;
-      --progress: 0;
-
       width: var(--size);
       height: var(--size);
       border-radius: 50%;
@@ -433,6 +431,14 @@ import { base } from "../utils/base.js";
       transition: background 0.3s ease-out;
     }
 
+    .pomodoro-pause .pomodoro-progress {
+      background: conic-gradient(
+          var(--clr-grey-400) calc(var(--progress) * 1%),
+          transparent 0%
+        ),
+        var(--clr-blue-50-1);
+    }
+
     .pomodoro-progress::before {
       content: "";
       position: absolute;
@@ -447,6 +453,14 @@ import { base } from "../utils/base.js";
       position: relative;
       z-index: 2;
       color: white;
+    }
+
+    .pomodoro-timer-btn:hover,
+    .pomodoro-timer-btn:active,
+    .pomodoro-reset-btn:hover,
+    .pomodoro-reset-btn:active {
+      color: var(--clr-pomodoro);
+      currentcolor: var(--clr-pomodoro);
     }
 
     @media screen and (min-width: 48em) {

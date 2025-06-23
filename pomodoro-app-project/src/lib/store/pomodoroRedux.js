@@ -1,20 +1,16 @@
 import { getStateFromLocalStorage } from "../utils/utils.js";
-import { POMODORO_VALUES } from "../utils/constants.js";
+import { POMODORO_VALUES, POMODORO_MAX_INTERVAL } from "../utils/constants.js";
 
 const initialState = {
-  // @todo, test
-  timePomodoro: 3, // @todo, test
-  timeShortBreak: 1, // @todo, test
-  timeLongBreak: 2, // @todo, test
-  // timePomodoro: 25,
-  // timeShortBreak: 5,
-  // timeLongBreak: 15,
+  timePomodoro: 25,
+  timeShortBreak: 5,
+  timeLongBreak: 15,
   font: "--ff-space",
   color: "--clr-purple-400",
   letterSpacing: "--ff-space",
 
   pomodoroMode: POMODORO_VALUES.POMODORO,
-  countPomodoro: 0, // maximum 4
+  countPomodoro: 0, // maximum POMODORO_MAX_INTERVAL
 
   totalDuration: 25 * 60,
   timeRemaining: 25 * 60,
@@ -27,6 +23,7 @@ export const ActionTypes = Object.freeze({
   UPDATE_MODE: "UPDATE_MODE",
   APPLY: "APPLY_SETTINGS",
   INCREASE_COUNT_POMODORO: "INCREASE_COUNT_POMODORO",
+  MAX_COUNT_POMODORO: "MAX_COUNT_POMODORO",
   START: "START",
   PAUSE: "PAUSE",
   STOP: "STOP",
@@ -70,6 +67,12 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         countPomodoro: state.countPomodoro + 1,
+      };
+    }
+    case ActionTypes.MAX_COUNT_POMODORO: {
+      return {
+        ...state,
+        countPomodoro: POMODORO_MAX_INTERVAL,
       };
     }
     case ActionTypes.START: {
@@ -217,5 +220,11 @@ export const resetTimerAction = (store) => {
 export const increaseCountPomodoroAction = (store) => {
   store.dispatch({
     type: ActionTypes.INCREASE_COUNT_POMODORO,
+  });
+};
+
+export const maxCountPomodoroAction = (store) => {
+  store.dispatch({
+    type: ActionTypes.MAX_COUNT_POMODORO,
   });
 };

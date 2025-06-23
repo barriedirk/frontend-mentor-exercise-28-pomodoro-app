@@ -79,8 +79,11 @@ import { base } from "../utils/base.js";
     updateMode,
     getState,
     addListener,
+    increaseCountPomodoro,
+    maxCountPomodoro,
   } from "../scripts/PomodoroStore.js";
   import { setAccesibilityRadio, setInputValue } from "../lib/utils/utils.js";
+  import { POMODORO_VALUES } from "../lib/utils/constants.js";
 
   (async () => {
     let { pomodoroMode } = getState();
@@ -129,7 +132,17 @@ import { base } from "../utils/base.js";
 
             label?.setAttribute("aria-checked", "true");
 
-            updateMode({ pomodoroMode: el.value });
+            pomodoroMode = el.value;
+
+            updateMode({ pomodoroMode });
+
+            if (pomodoroMode === POMODORO_VALUES.SHORT_BREAK) {
+              increaseCountPomodoro();
+            }
+
+            if (pomodoroMode === POMODORO_VALUES.LONG_BREAK) {
+              maxCountPomodoro();
+            }
           });
         }
       });

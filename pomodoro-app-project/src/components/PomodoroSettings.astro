@@ -428,6 +428,7 @@ import { base } from "../utils/base.js";
     applySettings,
     addListener,
     getState,
+    resetTimer,
   } from "../scripts/PomodoroStore.js";
   import {
     setInputValue,
@@ -497,6 +498,31 @@ import { base } from "../utils/base.js";
 
       const form = document.getElementById("form-settings")!;
       const formData = new FormData(form as any);
+
+      const timePomodoro = formData.get("timePomodoro");
+      const timeShortBreak = formData.get("timeShortBreak");
+      const timeLongBreak = formData.get("timeLongBreak");
+      const color = formData.get("color");
+      const font = formData.get("font");
+
+      const values = [timePomodoro, timeShortBreak, timeLongBreak].map((val) =>
+        Number(val)
+      );
+
+      const hasInvalid = values.some((val) => !val || isNaN(val) || val < 1);
+
+      if (hasInvalid) {
+        alert("Please enter a valid number (1 or more) for all time settings.");
+
+        return;
+      }
+
+      if (!font || !color) {
+        alert("Please enter a valid font and/or color for all time settings.");
+
+        return;
+      }
+
       let output: Record<string, any> = {};
 
       for (const [key, value] of formData) {
@@ -507,6 +533,7 @@ import { base } from "../utils/base.js";
         output.font === "--ff-space" ? "--ls--10" : "--ls-0";
 
       applySettings(output as ApplySettingsActionParams);
+      resetTimer();
 
       modalDialog!.close();
     });

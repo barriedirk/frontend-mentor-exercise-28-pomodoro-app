@@ -70,7 +70,13 @@ export const setInputValue = (selector, type, value) => {
 export const onlyInputNumberAllowed = (selectorInputs) => {
   document.querySelectorAll(selectorInputs).forEach((input) => {
     input.addEventListener("input", () => {
-      input.value = input.value.replace(/[^\d]/g, "");
+      let value = input.value.replace(/[^\d]/g, "");
+
+      if (value.length > 1) {
+        value = value.replace(/^0+/, "");
+      }
+
+      input.value = value;
     });
   });
 };
