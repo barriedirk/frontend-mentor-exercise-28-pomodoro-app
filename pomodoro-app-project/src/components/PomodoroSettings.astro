@@ -456,35 +456,40 @@ import { base } from "../utils/base.js";
 
     addListener(listener);
 
-    setInputValue(
-      ".pomodoro-settings input[name='timePomodoro']",
-      "value",
-      timePomodoro
-    );
+    const setFormValues = () => {
+      const { timePomodoro, timeShortBreak, timeLongBreak, font, color } =
+        getState();
 
-    setInputValue(
-      ".pomodoro-settings input[name='timeLongBreak']",
-      "value",
-      timeLongBreak
-    );
+      setInputValue(
+        ".form-settings input[name='timePomodoro']",
+        "value",
+        timePomodoro
+      );
 
-    setInputValue(
-      ".pomodoro-settings input[name='timeShortBreak']",
-      "value",
-      timeShortBreak
-    );
+      setInputValue(
+        ".form-settings input[name='timeLongBreak']",
+        "value",
+        timeLongBreak
+      );
 
-    setInputValue(
-      `.pomodoro-settings input[name="font"][value="${font}"]`,
-      "checked",
-      true
-    );
+      setInputValue(
+        ".form-settings input[name='timeShortBreak']",
+        "value",
+        timeShortBreak
+      );
 
-    setInputValue(
-      `.pomodoro-settings input[name="color"][value="${color}"]`,
-      "checked",
-      true
-    );
+      setInputValue(
+        `.form-settings input[name="font"][value="${font}"]`,
+        "checked",
+        true
+      );
+
+      setInputValue(
+        `.form-settings input[name="color"][value="${color}"]`,
+        "checked",
+        true
+      );
+    };
 
     setAccesibilityRadio(
       '.form-settings__color input[type="radio"], .form-settings__font input[type="radio"]',
@@ -542,6 +547,8 @@ import { base } from "../utils/base.js";
 
     btnOpenDialog!.addEventListener("click", (evt) => {
       evt.preventDefault();
+
+      setFormValues();
 
       lastFocusedElement = document.activeElement as HTMLElement;
 
